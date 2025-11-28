@@ -34,8 +34,18 @@ COPY docker/supervisord.conf /tmp/supervisord.conf
 # Configurar diretório de trabalho
 WORKDIR /var/www/html
 
-# Copiar arquivos do Laravel (que estão em public_html (4)/)
-COPY "public_html (4)/" .
+# Copiar arquivos do Laravel usando um padrão que evita problemas com parênteses
+# Copiar tudo primeiro para um diretório temporário
+COPY . /tmp/source/
+
+# Encontrar e copiar o diretório public_html (4)
+RUN for dir in /tmp/source/public_html*; do \
+        if [ -d "$$dir" ]; then \
+            cp -r "$$dir"/. /var/www/html/; \
+            break; \
+        fi; \
+    done && \
+    rm -rf /tmp/source
 
 # Instalar dependências PHP
 RUN composer install --no-dev --optimize-autoloader --no-interaction
