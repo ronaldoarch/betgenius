@@ -27,20 +27,26 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Configurar PHP SSL
 RUN echo "openssl.cafile=/etc/ssl/certs/ca-certificates.crt" >> /usr/local/etc/php/conf.d/ssl.ini
 
+# Copiar configurações do Docker primeiro (antes de mudar WORKDIR)
+COPY docker/nginx.conf /tmp/nginx.conf
+COPY docker/supervisord.conf /tmp/supervisord.conf
+
 # Configurar diretório de trabalho
 WORKDIR /var/www/html
 
-# Copiar arquivos do projeto
-COPY . .
+# Copiar arquivos do Laravel (que estão em public_html (4)/)
+COPY "public_html (4)/" .
 
 # Instalar dependências PHP
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Instalar dependências Node e build do React
+# Primeiro copiar o frontend React
+COPY "frontend-react/" frontend-react/
 WORKDIR /var/www/html/frontend-react
 RUN npm ci && npm run build
 
-# Voltar para raiz
+# Voltar para raiz do Laravel
 WORKDIR /var/www/html
 
 # Configurar permissões
@@ -48,13 +54,11 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Copiar configuração do Nginx
-COPY docker/nginx.conf /etc/nginx/sites-available/default
-RUN rm -f /etc/nginx/sites-enabled/default \
-    && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-
-# Copiar configuração do Supervisor
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Mover configurações do Nginx e Supervisor para os locais corretos
+RUN mv /tmp/nginx.conf /etc/nginx/sites-available/default && \
+    rm -f /etc/nginx/sites-enabled/default && \
+    ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/ && \
+    mv /tmp/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expor porta
 EXPOSE 80
