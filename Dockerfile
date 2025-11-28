@@ -41,13 +41,13 @@ COPY . /tmp/source/
 # Encontrar e copiar o diretório public_html (4)
 RUN set -eux && \
     LARAVEL_DIR=$(find /tmp/source -maxdepth 1 -type d -name "public_html*" | head -1) && \
-    if [ -z "$$LARAVEL_DIR" ]; then \
+    if [ -z "$LARAVEL_DIR" ]; then \
         echo "ERRO: Diretório public_html não encontrado!" && \
         ls -la /tmp/source/ && \
         exit 1; \
     fi && \
-    echo "Copiando de: $$LARAVEL_DIR" && \
-    cp -r "$$LARAVEL_DIR"/. /var/www/html/ && \
+    echo "Copiando de: $LARAVEL_DIR" && \
+    cp -r "$LARAVEL_DIR"/. /var/www/html/ && \
     echo "Verificando composer.json..." && \
     ls -la /var/www/html/composer.json && \
     rm -rf /tmp/source
