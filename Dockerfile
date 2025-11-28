@@ -22,7 +22,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Instalar Node.js e npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs \
+    && node --version \
+    && npm --version
 
 # Configurar PHP SSL
 RUN echo "openssl.cafile=/etc/ssl/certs/ca-certificates.crt" >> /usr/local/etc/php/conf.d/ssl.ini
@@ -40,26 +42,46 @@ COPY . /tmp/source/
 
 # Encontrar e copiar o diretório public_html (4)
 RUN set -eux && \
+    echo "=== Buscando diretório Laravel ===" && \
+    ls -la /tmp/source/ && \
     LARAVEL_DIR=$(find /tmp/source -maxdepth 1 -type d -name "public_html*" | head -1) && \
+    echo "Diretório encontrado: $LARAVEL_DIR" && \
     if [ -z "$LARAVEL_DIR" ]; then \
         echo "ERRO: Diretório public_html não encontrado!" && \
+        echo "Conteúdo de /tmp/source:" && \
         ls -la /tmp/source/ && \
         exit 1; \
     fi && \
-    echo "Copiando de: $LARAVEL_DIR" && \
+    echo "=== Copiando arquivos do Laravel ===" && \
     cp -r "$LARAVEL_DIR"/. /var/www/html/ && \
-    echo "Verificando composer.json..." && \
+    echo "=== Verificando arquivos copiados ===" && \
+    ls -la /var/www/html/ | head -20 && \
+    echo "=== Verificando composer.json ===" && \
+    if [ ! -f /var/www/html/composer.json ]; then \
+        echo "ERRO: composer.json não encontrado após cópia!" && \
+        exit 1; \
+    fi && \
     ls -la /var/www/html/composer.json && \
-    rm -rf /tmp/source
+    echo "=== Limpando diretório temporário ===" && \
+    rm -rf /tmp/source && \
+    echo "=== Cópia concluída com sucesso ==="
 
 # Instalar dependências PHP
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN echo "=== Instalando dependências PHP com Composer ===" && \
+    composer --version && \
+    composer install --no-dev --optimize-autoloader --no-interaction --verbose && \
+    echo "=== Dependências PHP instaladas com sucesso ==="
 
 # Instalar dependências Node e build do React
 # Primeiro copiar o frontend React
 COPY "frontend-react/" frontend-react/
 WORKDIR /var/www/html/frontend-react
-RUN npm ci && npm run build
+RUN echo "=== Instalando dependências Node ===" && \
+    npm ci --verbose && \
+    echo "=== Construindo aplicação React ===" && \
+    npm run build && \
+    echo "=== Build do React concluído ===" && \
+    ls -la dist/ | head -10
 
 # Voltar para raiz do Laravel
 WORKDIR /var/www/html
