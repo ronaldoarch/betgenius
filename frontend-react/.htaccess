@@ -1,0 +1,20 @@
+DirectoryIndex index.php index.html
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# API, Admin (zirigui) ou Storage → index.php na raiz (que roteia para Laravel)
+RewriteCond %{REQUEST_URI} ^/(api|zirigui|storage) [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Redirecionar tudo mais para public/ (React será servido pelo index.php da raiz)
+RewriteRule ^(.*)$ public/$1 [L]

@@ -1,0 +1,54 @@
+═══════════════════════════════════════════════════════════════
+✅ SOLUÇÃO FINAL - ERRO 403
+═══════════════════════════════════════════════════════════════
+
+O erro 403 pode ser porque o Document Root está em public_html/ mas precisa estar em public_html/public/
+
+═══════════════════════════════════════════════════════════════
+
+OPÇÃO 1: Alterar Document Root no hPanel (RECOMENDADO)
+
+1. Acesse: https://hpanel.hostinger.com/
+2. Vá em: Domínios → betgeniusbr.com → Configurações
+3. Procure por: "Document Root" ou "Raiz do Documento"
+4. Altere de: public_html
+5. Para: public_html/public
+6. Salve e aguarde 2-3 minutos
+
+═══════════════════════════════════════════════════════════════
+
+OPÇÃO 2: Se não conseguir alterar, remover .htaccess da raiz
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && mv .htaccess .htaccess.disabled && echo "✅ .htaccess desabilitado (teste se funciona)"
+
+═══════════════════════════════════════════════════════════════
+
+OPÇÃO 3: Criar .htaccess que permite tudo
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Permitir TUDO primeiro
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar para public/
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess simplificado criado"
+
+═══════════════════════════════════════════════════════════════
+
+TESTAR:
+
+Limpe o cache do navegador (Ctrl+Shift+R) e teste:
+https://betgeniusbr.com/
+
+═══════════════════════════════════════════════════════════════
+

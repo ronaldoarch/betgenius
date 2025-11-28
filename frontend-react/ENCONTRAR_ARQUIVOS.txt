@@ -1,0 +1,38 @@
+═══════════════════════════════════════════════════════════════
+🔍 ENCONTRAR ONDE ESTÃO OS ARQUIVOS
+═══════════════════════════════════════════════════════════════
+
+Os arquivos não foram encontrados em app/assets/. Vamos procurar:
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar estrutura completa:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "=== Estrutura public/ ===" && ls -la && echo "" && echo "=== Estrutura app/ ===" && ls -la app/ 2>&1 && echo "" && echo "=== Procurar arquivos CSS/JS ===" && find . -name "*.css" -o -name "*.js" | grep -E "index-.*\.(css|js)$" | head -10
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Verificar se há pasta assets em outro lugar:
+
+find . -type d -name "assets" 2>&1
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Verificar o que o index.html está referenciando:
+
+if [ -f "app/index.html" ]; then
+    echo "=== Referências no index.html ==="
+    grep -E "assets|\.js|\.css" app/index.html | head -5
+else
+    echo "⚠️  index.html não encontrado em app/"
+    find . -name "index.html" 2>&1
+fi
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Listar tudo em app/:
+
+ls -laR app/ 2>&1 | head -30
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,39 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Permitir acesso direto a arquivos e diretórios existentes
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API do Laravel - redireciona para index_laravel.php
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index_laravel.php [L]
+
+  # Admin do Laravel (Filament) - redireciona para index_laravel.php
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index_laravel.php [L]
+
+  # Storage do Laravel - permite acesso direto
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # Todas as outras rotas vão para index.html (React Router)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# DirectoryIndex - priorizar index.html
+DirectoryIndex index.html index.php
+
+# Permitir acesso ao index.html
+<Files "index.html">
+  Order allow,deny
+  Allow from all
+  Require all granted
+</Files>
+

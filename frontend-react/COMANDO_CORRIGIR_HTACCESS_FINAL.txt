@@ -1,0 +1,43 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .htaccess - Executar index.php para API
+═══════════════════════════════════════════════════════════════
+
+O problema é que o .htaccess não está executando o index.php.
+Execute este comando para corrigir:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# API, Admin e Storage → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/api [NC,OR]
+RewriteCond %{REQUEST_URI} ^/admin [NC,OR]
+RewriteCond %{REQUEST_URI} ^/storage [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Arquivos e diretórios existentes → Servir diretamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+chmod 644 .htaccess && echo "OK .htaccess corrigido" && rm -f index_executed.log && sleep 3 && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games/all > /dev/null && sleep 2 && if [ -f index_executed.log ]; then echo "✅ index.php FOI EXECUTADO!" && cat index_executed.log && echo "" && echo "Testando resposta:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games/all | head -c 300; else echo "❌ index.php AINDA NÃO FOI EXECUTADO!"; fi
+
+═══════════════════════════════════════════════════════════════
+
+A mudança importante é que agora o .htaccess EXECUTA o index.php
+para rotas /api/*, /admin/* e /storage/*, em vez de apenas parar.
+
+═══════════════════════════════════════════════════════════════
+

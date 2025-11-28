@@ -1,0 +1,143 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .HTACCESS PARA ADMIN FUNCIONAR
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: Admin panel retorna HTML ao invés de JSON
+CAUSA: Requisições do admin estão sendo interceptadas pelo React
+
+───────────────────────────────────────────────────────────────
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# Verificar .htaccess atual
+echo "=== .htaccess na raiz ==="
+cat .htaccess
+echo ""
+echo "=== .htaccess em public/ ==="
+cat public/.htaccess
+echo ""
+
+# Corrigir .htaccess na raiz (garantir que /zirigui/* seja roteado para Laravel ANTES de tudo)
+cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Admin (zirigui) → Executar index.php na raiz ANTES de tudo
+RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+RewriteRule ^ index.php [L]
+
+# API → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^ index.php [L]
+
+# Storage → Servir diretamente se arquivo existir
+RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+
+echo "✅ .htaccess na raiz atualizado"
+echo ""
+
+# Corrigir .htaccess em public/ (garantir que /zirigui/* seja roteado para Laravel)
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Admin (zirigui) → Laravel (index.php) - ANTES de tudo
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ index.php [L]
+
+    # API → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # Storage → Servir diretamente se arquivo existir
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React (index.html)
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/zirigui
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+echo "✅ .htaccess em public/ atualizado"
+echo ""
+
+# Limpar cache
+echo "=== Limpando cache ==="
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+echo "✅ Cache limpo"
+echo ""
+
+echo "═══════════════════════════════════════════════════════════════"
+echo "✅ CORREÇÃO CONCLUÍDA"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "💡 Agora tente salvar o banner novamente no admin panel"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,18 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR LOGOS E BANNERS
+═══════════════════════════════════════════════════════════════
+
+Execute no SSH:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Logos da API:" && LOGO_WHITE=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_white":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g') && LOGO_BLACK=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_black":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g') && echo "Logo White: $LOGO_WHITE" && echo "Logo Black: $LOGO_BLACK" && echo "" && echo "2. Verificando se existem:" && if [ ! -z "$LOGO_WHITE" ]; then if [ -f "storage/app/public/$LOGO_WHITE" ]; then echo "✅ Logo White existe"; else echo "❌ Logo White NÃO existe"; fi; fi && if [ ! -z "$LOGO_BLACK" ]; then if [ -f "storage/app/public/$LOGO_BLACK" ]; then echo "✅ Logo Black existe"; else echo "❌ Logo Black NÃO existe"; fi; fi && echo "" && echo "3. Testando URLs:" && if [ ! -z "$LOGO_WHITE" ]; then HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I "https://betgeniusbr.com/storage/$LOGO_WHITE") && echo "Logo White: HTTP $HTTP_CODE"; fi && if [ ! -z "$LOGO_BLACK" ]; then HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I "https://betgeniusbr.com/storage/$LOGO_BLACK") && echo "Logo Black: HTTP $HTTP_CODE"; fi && echo "" && echo "4. Banners:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners | grep -o '"type":"[^"]*"' | sort | uniq -c
+
+═══════════════════════════════════════════════════════════════
+
+💡 O React JÁ ESTÁ CONFIGURADO para buscar e exibir:
+   ✅ Logo no header (software_logo_white)
+   ✅ Logo no loading (software_logo_black)
+   ✅ Banners do carrossel (tipo 'carousel')
+   ✅ Banners TOP (tipo 'home' ou 'top')
+
+═══════════════════════════════════════════════════════════════
+

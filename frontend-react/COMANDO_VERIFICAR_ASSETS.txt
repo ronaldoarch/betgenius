@@ -1,0 +1,22 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR ASSETS E CORRIGIR INDEX.PHP
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando assets..." && ls -lh public/assets/ | head -5 && echo "" && echo "2. Testando acesso HTTP aos assets:" && echo "   JavaScript:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/assets/index-DrMwNlRZ.js && echo "   CSS:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/assets/index-R46pBGYW.css && echo "" && echo "3. Verificando index.php na raiz..." && cat index.php
+
+═══════════════════════════════════════════════════════════════
+
+Este comando verifica:
+- Se os assets existem
+- Se estão acessíveis via HTTP
+- Como o index.php está servindo o conteúdo
+
+Se os assets retornarem 404, precisamos corrigir o .htaccess
+ou o caminho dos assets.
+
+═══════════════════════════════════════════════════════════════
+

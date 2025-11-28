@@ -1,0 +1,37 @@
+===========================================
+COMANDOS PARA DEPLOY
+===========================================
+
+1. BUILD (JÁ FOI FEITO ✅)
+   cd frontend-react
+   npm run build
+
+2. UPLOAD VIA FILEZILLA:
+   - Conecte: betgeniusbr.com
+   - Usuário: u127271520
+   - Navegue até: /public_html/public/
+   - Crie pasta: app
+   - Upload: dist/* → app/
+
+3. OU VIA SSH (se FileZilla não funcionar):
+   
+   # Compactar
+   cd frontend-react
+   tar -czf frontend-react.tar.gz dist/
+   
+   # Upload
+   scp frontend-react.tar.gz u127271520@betgeniusbr.com:/tmp/
+   
+   # No servidor
+   ssh u127271520@betgeniusbr.com
+   cd /home/u127271520/domains/betgeniusbr.com/public_html/public
+   mkdir -p app
+   cd /tmp
+   tar -xzf frontend-react.tar.gz
+   mv dist/* /home/u127271520/domains/betgeniusbr.com/public_html/public/app/
+   chmod -R 755 /home/u127271520/domains/betgeniusbr.com/public_html/public/app
+
+4. ACESSAR:
+   https://betgeniusbr.com/app/
+
+===========================================

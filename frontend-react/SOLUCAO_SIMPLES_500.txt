@@ -1,0 +1,56 @@
+═══════════════════════════════════════════════════════════════
+✅ SOLUÇÃO SIMPLES - ERRO 500
+═══════════════════════════════════════════════════════════════
+
+Vamos simplificar o .htaccess e garantir que funcione:
+
+═══════════════════════════════════════════════════════════════
+
+COMANDO COMPLETO:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "1️⃣ Verificando arquivos..." && ls -la app/assets/*.css app/assets/*.js 2>&1 | head -3 && echo "" && echo "2️⃣ Criando .htaccess SIMPLIFICADO..." && cat > .htaccess << 'EOF'
+# Desabilitar PHP para arquivos estáticos
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$">
+  SetHandler default-handler
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Servir arquivos existentes diretamente (SEM processar)
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess criado" && echo "" && echo "3️⃣ Verificando permissões..." && chmod 644 app/assets/*.css app/assets/*.js 2>/dev/null && chmod 755 app/assets/ && echo "✅ Permissões OK" && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

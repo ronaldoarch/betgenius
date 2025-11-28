@@ -1,0 +1,80 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR BANNERS DO CARROSSEL
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH para diagnosticar:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Testar API de banners
+echo "=== 1. Testando API de banners ==="
+curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners | jq '.' || curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners
+echo ""
+echo ""
+
+# 2. Verificar banners no banco de dados
+echo "=== 2. Verificando banners no banco ==="
+php artisan tinker --execute="echo json_encode(\App\Models\Banner::all()->toArray(), JSON_PRETTY_PRINT);"
+echo ""
+echo ""
+
+# 3. Verificar se os arquivos de imagem dos banners existem
+echo "=== 3. Verificando arquivos de imagem dos banners ==="
+php artisan tinker --execute="
+\$banners = \App\Models\Banner::where('type', 'carousel')->get();
+foreach (\$banners as \$banner) {
+    echo 'Banner ID: ' . \$banner->id . PHP_EOL;
+    echo 'Image path: ' . \$banner->image . PHP_EOL;
+    \$fullPath = storage_path('app/public/' . \$banner->image);
+    \$publicPath = public_path('storage/' . \$banner->image);
+    echo 'Storage path: ' . \$fullPath . PHP_EOL;
+    echo 'Public path: ' . \$publicPath . PHP_EOL;
+    echo 'Storage exists: ' . (file_exists(\$fullPath) ? 'SIM' : 'NÃO') . PHP_EOL;
+    echo 'Public exists: ' . (file_exists(\$publicPath) ? 'SIM' : 'NÃO') . PHP_EOL;
+    echo '---' . PHP_EOL;
+}
+"
+echo ""
+echo ""
+
+# 4. Testar URLs dos banners
+echo "=== 4. Testando URLs dos banners ==="
+php artisan tinker --execute="
+\$banners = \App\Models\Banner::where('type', 'carousel')->get();
+foreach (\$banners as \$banner) {
+    \$url = 'https://betgeniusbr.com/storage/' . \$banner->image;
+    echo 'Banner ID: ' . \$banner->id . PHP_EOL;
+    echo 'URL: ' . \$url . PHP_EOL;
+    \$ch = curl_init(\$url);
+    curl_setopt(\$ch, CURLOPT_NOBODY, true);
+    curl_setopt(\$ch, CURLOPT_RETURNTRANSFER, true);
+    curl_exec(\$ch);
+    \$httpCode = curl_getinfo(\$ch, CURLINFO_HTTP_CODE);
+    \$contentType = curl_getinfo(\$ch, CURLINFO_CONTENT_TYPE);
+    curl_close(\$ch);
+    echo 'HTTP Code: ' . \$httpCode . PHP_EOL;
+    echo 'Content-Type: ' . \$contentType . PHP_EOL;
+    echo '---' . PHP_EOL;
+}
+"
+echo ""
+echo ""
+
+# 5. Verificar estrutura de resposta da API
+echo "=== 5. Estrutura da resposta da API ==="
+curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners | python3 -m json.tool 2>/dev/null || curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners
+echo ""
+
+═══════════════════════════════════════════════════════════════
+
+💡 POSSÍVEIS PROBLEMAS:
+
+1. API não retorna banners com tipo 'carousel'
+2. URLs das imagens estão incorretas
+3. Arquivos de imagem não existem no storage
+4. Content-Type das imagens está incorreto (text/html ao invés de image/*)
+
+═══════════════════════════════════════════════════════════════
+

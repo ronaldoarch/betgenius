@@ -1,0 +1,20 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR API E DADOS
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "Testando APIs..." && echo "" && echo "1. /api/games:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/api/games && echo "" && echo "2. /api/banners:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/api/banners && echo "" && echo "3. /api/categories:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/api/categories && echo "" && echo "Se retornarem 404, as rotas não existem ou não estão configuradas."
+
+═══════════════════════════════════════════════════════════════
+
+Este comando testa se as APIs estão respondendo.
+Se retornarem 404, as rotas não estão configuradas.
+
+Também verifique o console do navegador (F12) para ver
+erros específicos do React tentando carregar os dados.
+
+═══════════════════════════════════════════════════════════════
+

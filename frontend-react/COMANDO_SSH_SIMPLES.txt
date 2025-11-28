@@ -1,0 +1,19 @@
+cd /home/u127271520/domains/betgeniusbr.com/public_html && rm -f index.php && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+EOF
+chmod 644 .htaccess && chmod 755 . && chmod 755 public/ && echo "✅ Pronto!"
+

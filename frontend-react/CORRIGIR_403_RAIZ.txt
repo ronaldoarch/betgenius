@@ -1,0 +1,31 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR ERRO 403 - RAIZ BLOQUEADA
+═══════════════════════════════════════════════════════════════
+
+O .htaccess na raiz está bloqueando o acesso. Vamos corrigir:
+
+═══════════════════════════════════════════════════════════════
+
+COMANDO COMPLETO:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1️⃣ Verificando .htaccess na raiz..." && cat .htaccess && echo "" && echo "2️⃣ Corrigindo .htaccess na raiz..." && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Arquivos existentes - servir diretamente
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar tudo para public/ (exceto se já estiver em public/)
+  RewriteCond %{REQUEST_URI} !^/public/
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess na raiz corrigido" && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,20 @@
+═══════════════════════════════════════════════════════════════
+🔍 BUSCAR IMAGENS E CRIAR SYMLINK SE NECESSÁRIO
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para buscar as imagens e criar o symlink:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Buscando logo:" && find . -name "Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" 2>/dev/null | head -3 && echo "" && echo "2. Buscando banner:" && find . -name "01KA9S09Z85AV3205AQ8C71B6T.JPG" 2>/dev/null | head -3 && echo "" && echo "3. Verificando symlink:" && if [ -L public/storage ]; then echo "✅ Symlink existe"; else echo "❌ Symlink não existe - Criando..."; php artisan storage:link; echo "✅ Symlink criado"; fi && echo "" && echo "4. Verificando storage/app/public/uploads:" && ls -la storage/app/public/uploads 2>/dev/null | head -5 || echo "Diretório não existe"
+
+═══════════════════════════════════════════════════════════════
+
+Este comando vai:
+1. Buscar os arquivos de logo e banner em todo o servidor
+2. Verificar se o symlink public/storage existe
+3. Criar o symlink se não existir
+4. Verificar o diretório uploads
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,67 @@
+═══════════════════════════════════════════════════════════════
+🔧 REMOVER INDEX.PHP DA RAIZ
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: index.php na raiz está interferindo
+SOLUÇÃO: Remover index.php da raiz (o .htaccess já faz o redirecionamento)
+
+───────────────────────────────────────────────────────────────
+
+Execute no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Verificar conteúdo do index.php atual
+echo "=== Conteúdo do index.php na raiz ==="
+cat index.php
+echo ""
+echo ""
+
+# 2. Remover index.php da raiz
+echo "=== Removendo index.php da raiz ==="
+if [ -f "index.php" ]; then
+    mv index.php index.php.backup.$(date +%Y%m%d_%H%M%S)
+    echo "✅ index.php removido da raiz"
+    echo "Backup criado"
+else
+    echo "index.php já não existe na raiz"
+fi
+echo ""
+
+# 3. Verificar se public/index.php existe
+echo "=== Verificando public/index.php ==="
+if [ -f "public/index.php" ]; then
+    echo "✅ public/index.php existe (correto)"
+else
+    echo "❌ public/index.php NÃO existe!"
+fi
+echo ""
+
+# 4. Verificar .htaccess na raiz
+echo "=== Verificando .htaccess na raiz ==="
+cat .htaccess | head -20
+echo ""
+
+# 5. Testar roteamento
+echo "=== Testando roteamento ==="
+echo "Agora /zirigui deve ser roteado pelo .htaccess para public/"
+echo "E o .htaccess em public/ deve rotear para Laravel"
+echo ""
+
+# 6. Limpar cache
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+
+echo "✅ Correção concluída!"
+echo ""
+echo "💡 Agora:"
+echo "   1. Limpe o cache do navegador (Ctrl+Shift+R)"
+echo "   2. Acesse: https://betgeniusbr.com/zirigui"
+echo "   3. Deve carregar o admin do Filament"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

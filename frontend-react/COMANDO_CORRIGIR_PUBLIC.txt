@@ -1,0 +1,64 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .htaccess EM public/ - Servir Storage Diretamente
+═══════════════════════════════════════════════════════════════
+
+O problema é que o .htaccess em public/ também precisa servir
+arquivos de storage diretamente. Execute:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # API → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+
+    # Admin → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/admin [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React (index.html)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/api
+    RewriteCond %{REQUEST_URI} !^/admin
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess em public/ corrigido!" && sleep 3 && echo "" && echo "Testando:" && curl -s -I https://betgeniusbr.com/storage/Games/Pragmatic_Oficial/vs10amm.webp | head -5
+
+═══════════════════════════════════════════════════════════════
+
+A mudança importante é que agora a verificação de arquivos existentes
+vem PRIMEIRO no .htaccess de public/, garantindo que arquivos sejam
+servidos diretamente pelo Apache antes de qualquer regra de rewrite.
+
+═══════════════════════════════════════════════════════════════
+

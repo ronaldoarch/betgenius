@@ -1,0 +1,72 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .htaccess NA RAIZ - Pode estar interferindo
+═══════════════════════════════════════════════════════════════
+
+O problema pode ser o .htaccess na raiz. Execute este comando:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > .htaccess << 'EOF'
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirecionar tudo para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+chmod 644 .htaccess && echo "OK .htaccess na raiz corrigido" && sleep 3 && echo "" && echo "Testando API..." && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games/all | head -c 300
+
+═══════════════════════════════════════════════════════════════
+
+Também remova o DirectoryIndex do .htaccess em public/:
+
+═══════════════════════════════════════════════════════════════
+
+cd public && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # CRITICO: API/Admin/Storage PRIMEIRO → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/admin [NC,OR]
+    RewriteCond %{REQUEST_URI} ^/storage [NC]
+    RewriteRule ^ index.php [L]
+
+    # Arquivos estáticos → Servir diretamente
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React (index.html)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+chmod 644 .htaccess && echo "OK .htaccess em public corrigido (DirectoryIndex removido)"
+
+═══════════════════════════════════════════════════════════════
+

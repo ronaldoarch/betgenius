@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR LOGO VIA API
+═══════════════════════════════════════════════════════════════
+
+Execute no SSH:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Buscando logo path na API:" && LOGO_PATH=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_white":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g') && echo "Logo path: $LOGO_PATH" && echo "" && echo "2. Procurando arquivo:" && LOGO_NAME=$(basename "$LOGO_PATH") && echo "Nome: $LOGO_NAME" && find . -name "$LOGO_NAME" 2>/dev/null | head -5 && echo "" && echo "3. Testando URL:" && LOGO_URL="https://betgeniusbr.com/storage/$LOGO_PATH" && echo "URL: $LOGO_URL" && HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I "$LOGO_URL") && CONTENT_TYPE=$(curl -s -o /dev/null -w "%{content_type}" -I "$LOGO_URL") && echo "HTTP: $HTTP_CODE | Content-Type: $CONTENT_TYPE"
+
+═══════════════════════════════════════════════════════════════
+
+💡 Se o logo não for encontrado:
+   1. Acesse: https://betgeniusbr.com/zirigui
+   2. Vá em: Settings → Upload logo
+   3. Faça upload do logo novamente
+
+═══════════════════════════════════════════════════════════════
+

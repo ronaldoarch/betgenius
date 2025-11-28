@@ -1,0 +1,58 @@
+═══════════════════════════════════════════════════════════════
+🚀 COMANDO SIMPLES - SOLUÇÃO 403
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos UM POR VEZ no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+# 1. Ir para o diretório
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 2. Criar index.php na raiz
+cat > index.php << 'EOF'
+<?php
+if (file_exists(__DIR__ . '/public/index.php')) {
+    require __DIR__ . '/public/index.php';
+} else {
+    http_response_code(500);
+    die('Erro: public/index.php não encontrado!');
+}
+EOF
+
+# 3. Criar .htaccess na raiz
+cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<Files index.php>
+  Order allow,deny
+  Allow from all
+</Files>
+EOF
+
+# 4. Ajustar permissões
+chmod 644 index.php .htaccess
+chmod 755 public/
+chmod 644 public/index.php
+
+# 5. Verificar
+echo "✅ Arquivos criados!"
+ls -la index.php .htaccess public/index.php
+
+═══════════════════════════════════════════════════════════════
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+
+Se ainda não funcionar, altere o Document Root no hPanel para: public_html
+
+═══════════════════════════════════════════════════════════════
+

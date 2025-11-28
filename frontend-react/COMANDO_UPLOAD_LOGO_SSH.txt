@@ -1,0 +1,45 @@
+═══════════════════════════════════════════════════════════════
+📤 UPLOAD DE LOGOS VIA SSH
+═══════════════════════════════════════════════════════════════
+
+⚠️ RECOMENDAÇÃO: Use a interface do admin para fazer upload
+   (https://betgeniusbr.com/zirigui → Settings)
+
+═══════════════════════════════════════════════════════════════
+
+📋 MÉTODO 1: Via Interface do Admin (MAIS FÁCIL)
+
+1. Acesse: https://betgeniusbr.com/zirigui
+2. Vá em: Settings
+3. Faça upload dos logos:
+   - LOGOTIPO 1 (software_logo_white) - para o header
+   - LOGOTIPO 2 (software_logo_black) - para o loading
+4. Clique em: "Salvar Informações"
+
+═══════════════════════════════════════════════════════════════
+
+📋 MÉTODO 2: Via SSH (se você tem os arquivos localmente)
+
+1. Copie os arquivos para o servidor (no seu MacBook):
+   scp -P 65002 /caminho/para/logo-white.png u127271520@betgeniusbr.com:~/logo-white.png
+   scp -P 65002 /caminho/para/logo-black.png u127271520@betgeniusbr.com:~/logo-black.png
+
+2. Conecte via SSH e mova os arquivos:
+   ssh -p 65002 u127271520@betgeniusbr.com
+   cd /home/u127271520/domains/betgeniusbr.com/public_html
+   mkdir -p storage/app/public/uploads
+   mv ~/logo-white.png storage/app/public/uploads/
+   mv ~/logo-black.png storage/app/public/uploads/
+   chmod 644 storage/app/public/uploads/*.png
+
+3. Depois, atualize via admin para salvar os paths no banco
+
+═══════════════════════════════════════════════════════════════
+
+💡 O upload via admin é mais fácil porque:
+   - Atualiza automaticamente o banco de dados
+   - Gera os nomes de arquivo corretos
+   - Salva os paths automaticamente
+
+═══════════════════════════════════════════════════════════════
+

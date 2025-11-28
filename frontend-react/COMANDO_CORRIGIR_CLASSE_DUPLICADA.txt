@@ -1,0 +1,50 @@
+═══════════════════════════════════════════════════════════════
+🚀 COMANDO PARA CORRIGIR CLASSE DUPLICADA
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH (um por vez):
+
+═══════════════════════════════════════════════════════════════
+
+# 1. Ir para o diretório
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 2. Fazer backup da pasta inteira (se existir)
+if [ -d "app/Filament/Resources/RoleResource" ]; then
+    tar -czf app/Filament/Resources/RoleResource.backup.$(date +%Y%m%d_%H%M%S).tar.gz app/Filament/Resources/RoleResource
+fi
+
+# 3. REMOVER o arquivo e pasta customizada que estão causando conflito
+rm -f app/Filament/Resources/RoleResource.php
+rm -rf app/Filament/Resources/RoleResource
+
+# 4. Limpar cache do Laravel
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+
+# 5. Regenerar autoload do Composer
+composer dump-autoload
+
+# 6. Otimizar aplicação
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 7. Verificar se o erro foi resolvido
+tail -10 storage/logs/laravel.log | grep -i "error\|exception" || echo "✅ Nenhum erro recente encontrado"
+
+═══════════════════════════════════════════════════════════════
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste as APIs:
+   - https://betgeniusbr.com/api/settings/data
+   - https://betgeniusbr.com/api/categories
+
+O arquivo customizado foi removido e o Laravel agora usará o RoleResource do pacote vendor.
+
+═══════════════════════════════════════════════════════════════
+

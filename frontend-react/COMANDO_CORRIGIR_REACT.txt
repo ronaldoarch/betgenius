@@ -1,0 +1,125 @@
+═══════════════════════════════════════════════════════════════
+🚀 CORRIGIR - REACT NÃO ESTÁ CARREGANDO
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+# 1. Ir para o diretório
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 2. Verificar se index.html existe
+if [ -f "public/index.html" ]; then
+    echo "✅ index.html existe"
+    head -5 public/index.html
+else
+    echo "❌ index.html NÃO existe - você precisa fazer upload!"
+fi
+
+# 3. Renomear index.php para forçar uso do index.html
+if [ -f "public/index.php" ]; then
+    mv public/index.php public/index.php.laravel
+    echo "✅ index.php renomeado para index.php.laravel"
+fi
+
+# 4. Criar .htaccess que prioriza index.html
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Permitir acesso direto a arquivos estáticos PRIMEIRO
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Permitir acesso à API do Laravel
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ index.php.laravel [L]
+
+    # Permitir acesso ao admin (Filament)
+    RewriteCond %{REQUEST_URI} ^/admin
+    RewriteRule ^ index.php.laravel [L]
+
+    # Permitir acesso ao storage
+    RewriteCond %{REQUEST_URI} ^/storage
+    RewriteRule ^ index.php.laravel [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Se não for arquivo/diretório e não for API/admin/storage, servir index.html (React)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/api
+    RewriteCond %{REQUEST_URI} !^/admin
+    RewriteCond %{REQUEST_URI} !^/storage
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# CRÍTICO: Priorizar index.html sobre index.php
+DirectoryIndex index.html index.php
+
+# Configurar MIME types
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/javascript mjs
+    AddType text/javascript js
+    AddType text/css css
+    AddType image/svg+xml svg svgz
+    AddType application/json json
+    AddType application/wasm wasm
+    AddType font/woff2 woff2
+    AddType font/woff woff
+    AddType font/ttf ttf
+</IfModule>
+
+# Headers para forçar MIME type correto
+<FilesMatch "\.(js|mjs)$">
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/javascript; charset=utf-8"
+    </IfModule>
+</FilesMatch>
+EOF
+
+chmod 644 public/.htaccess
+
+# 5. Limpar cache
+php artisan config:clear 2>/dev/null
+php artisan cache:clear 2>/dev/null
+php artisan route:clear 2>/dev/null
+php artisan view:clear 2>/dev/null
+php artisan optimize:clear 2>/dev/null
+
+# 6. Verificar estrutura
+echo ""
+echo "✅ Configuração concluída!"
+echo ""
+echo "Estrutura atual:"
+ls -la public/ | grep -E "index\.|\.htaccess"
+
+═══════════════════════════════════════════════════════════════
+
+IMPORTANTE:
+- Se index.html não existir, você precisa fazer upload:
+  frontend-react/dist/index.html → public/index.html
+  frontend-react/dist/assets/* → public/assets/*
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+
+═══════════════════════════════════════════════════════════════
+

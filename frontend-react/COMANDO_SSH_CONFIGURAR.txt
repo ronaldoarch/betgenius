@@ -1,0 +1,76 @@
+═══════════════════════════════════════════════════════════════
+🔧 CONFIGURAR REACT COMO SITE PRINCIPAL - COMANDO SSH
+═══════════════════════════════════════════════════════════════
+
+Execute no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Fazer backup do .htaccess atual:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && cp .htaccess .htaccess.backup && echo "✅ Backup criado"
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Criar novo .htaccess:
+
+cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Arquivos e diretórios existentes - permitir acesso direto
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess criado"
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Verificar se React está em /app/:
+
+ls -la app/ | head -5
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Limpar cache:
+
+cd .. && php artisan config:clear && php artisan cache:clear && echo "✅ Cache limpo"
+
+═══════════════════════════════════════════════════════════════
+
+5️⃣ Testar:
+
+echo "🧪 Teste agora:"
+echo "   🌐 https://betgeniusbr.com/ (deve mostrar React)"
+echo "   🔐 https://betgeniusbr.com/admin (deve mostrar Laravel)"
+echo "   🔌 https://betgeniusbr.com/api/... (deve funcionar)"
+
+═══════════════════════════════════════════════════════════════
+

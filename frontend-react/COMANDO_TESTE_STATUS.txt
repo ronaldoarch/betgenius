@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 TESTE HTTP STATUS - VER CÓDIGOS DE RESPOSTA
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Testando /public/index.html..." && STATUS1=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/public/index.html) && echo "   Status: $STATUS1" && echo "" && echo "2. Testando raiz /..." && STATUS2=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/) && echo "   Status: $STATUS2" && echo "" && echo "3. Testando /teste.txt..." && STATUS3=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/teste.txt) && echo "   Status: $STATUS3" && echo "" && echo "4. Testando /assets/index-DrMwNlRZ.js..." && STATUS4=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/assets/index-DrMwNlRZ.js) && echo "   Status: $STATUS4" && echo "" && echo "═══════════════════════════════════════════════════════════════" && echo "DIAGNÓSTICO:" && if [ "$STATUS3" = "200" ] && [ "$STATUS2" = "403" ]; then echo "⚠️  Document Root está em public_html/public (ERRADO)"; echo "   Altere para: public_html"; elif [ "$STATUS1" = "200" ] && [ "$STATUS2" = "403" ]; then echo "⚠️  .htaccess não está redirecionando corretamente"; elif [ "$STATUS2" = "200" ]; then echo "✅ Site funcionando!"; else echo "⚠️  Verifique os status acima"; fi
+
+═══════════════════════════════════════════════════════════════
+
+Este comando mostra os códigos HTTP (200, 403, 404, etc.)
+e faz um diagnóstico automático do problema.
+
+═══════════════════════════════════════════════════════════════
+

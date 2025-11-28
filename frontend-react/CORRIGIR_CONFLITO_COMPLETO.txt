@@ -1,0 +1,12 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR CONFLITO - COMANDO COMPLETO
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && php artisan config:clear && composer dump-autoload -o && if [ -f "app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php" ]; then cp app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php.backup && rm -f app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php && echo "✅ Arquivo duplicado removido"; else echo "⚠️  Arquivo não encontrado (já foi removido?)"; fi && php artisan cache:clear && php artisan route:clear && php artisan view:clear && echo "" && echo "✅ CORRIGIDO! Teste o site agora: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

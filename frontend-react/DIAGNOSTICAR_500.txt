@@ -1,0 +1,46 @@
+═══════════════════════════════════════════════════════════════
+🔍 DIAGNOSTICAR ERRO 500 - VERIFICAR ESTRUTURA
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos para diagnosticar:
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar estrutura de arquivos:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "=== Estrutura public_html ===" && ls -la | head -15 && echo "" && echo "=== Estrutura public/ ===" && ls -la public/ | head -15 && echo "" && echo "=== Estrutura public/app/ ===" && ls -la public/app/ | head -10
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Verificar se os arquivos assets existem:
+
+ls -la public/app/assets/ | head -5
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Verificar .htaccess na raiz (se existir):
+
+if [ -f ".htaccess" ]; then echo "=== .htaccess na raiz ===" && cat .htaccess; else echo "⚠️  Não há .htaccess na raiz"; fi
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Verificar .htaccess em public/:
+
+if [ -f "public/.htaccess" ]; then echo "=== .htaccess em public/ ===" && cat public/.htaccess; else echo "⚠️  Não há .htaccess em public/"; fi
+
+═══════════════════════════════════════════════════════════════
+
+5️⃣ Testar acesso direto aos arquivos:
+
+echo "Teste no servidor:"
+echo "  cat public/app/assets/index-R46pBGYW.css | head -5"
+cat public/app/assets/index-R46pBGYW.css 2>&1 | head -5
+
+═══════════════════════════════════════════════════════════════
+
+6️⃣ Verificar permissões:
+
+ls -ld public/app public/app/assets public/app/index.html public/app/assets/*.css public/app/assets/*.js 2>&1 | head -5
+
+═══════════════════════════════════════════════════════════════
+

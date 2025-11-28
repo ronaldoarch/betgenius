@@ -1,0 +1,68 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR BANNERS DO CARROSSEL (SEM TINKER)
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# Criar script PHP temporário
+cat > check_banners.php << 'PHPEOF'
+<?php
+require __DIR__ . '/vendor/autoload.php';
+$app = require_once __DIR__ . '/bootstrap/app.php';
+$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+
+$banners = \App\Models\Banner::where('type', 'carousel')->get();
+
+echo "=== BANNERS CAROUSEL ===\n";
+echo "Total: " . $banners->count() . "\n\n";
+
+foreach ($banners as $banner) {
+    echo "ID: {$banner->id}\n";
+    echo "Image: {$banner->image}\n";
+    echo "Link: {$banner->link}\n";
+    
+    $storagePath = storage_path('app/public/' . $banner->image);
+    $publicPath = public_path('storage/' . $banner->image);
+    
+    echo "Storage path: $storagePath\n";
+    echo "Storage existe: " . (file_exists($storagePath) ? 'SIM' : 'NÃO') . "\n";
+    echo "Public path: $publicPath\n";
+    echo "Public existe: " . (file_exists($publicPath) ? 'SIM' : 'NÃO') . "\n";
+    
+    $url = 'https://betgeniusbr.com/storage/' . $banner->image;
+    echo "URL: $url\n";
+    
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_NOBODY, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    curl_close($ch);
+    
+    echo "HTTP Code: $httpCode\n";
+    echo "Content-Type: $contentType\n";
+    echo "---\n\n";
+}
+PHPEOF
+
+# Executar script
+php check_banners.php
+
+# Remover script
+rm check_banners.php
+
+═══════════════════════════════════════════════════════════════
+
+💡 Isso vai verificar:
+   1. Se os arquivos de imagem existem no storage
+   2. Se os arquivos estão acessíveis via symlink
+   3. Se as URLs retornam HTTP 200 e Content-Type correto
+
+═══════════════════════════════════════════════════════════════
+

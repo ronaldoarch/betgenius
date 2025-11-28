@@ -1,0 +1,20 @@
+.withdraw-page {
+  width: 100%;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #01b7fc;
+  border-radius: 5px;
+  color: #030c16;
+  font-size: 16px;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: #03c6fc;
+  box-shadow: 0 0 0 3px rgba(1, 183, 252, 0.1);
+}
+

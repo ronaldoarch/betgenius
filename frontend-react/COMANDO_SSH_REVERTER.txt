@@ -1,0 +1,62 @@
+═══════════════════════════════════════════════════════════════
+🔄 COMANDO SSH PARA REVERTER - COPIE E COLE TUDO
+═══════════════════════════════════════════════════════════════
+
+1️⃣ PRIMEIRO: Conecte-se via SSH:
+   ssh -p 65002 u127271520@betgeniusbr.com
+
+2️⃣ DEPOIS: Cole este comando completo:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "🔄 REVERTENDO..." && rm -f index.html index_laravel.php && rm -rf assets && cat > index.php << 'EOF'
+<?php
+
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require __DIR__.'/../vendor/autoload.php';
+
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response);
+EOF
+chmod 644 index.php && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+EOF
+chmod 644 .htaccess && cd .. && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan optimize:clear && echo "" && echo "✅ REVERSÃO CONCLUÍDA!" && echo "🧪 Teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

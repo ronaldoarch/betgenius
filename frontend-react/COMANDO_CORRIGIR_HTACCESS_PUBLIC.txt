@@ -1,0 +1,41 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .HTACCESS EM PUBLIC/ E GARANTIR QUE FUNCIONE
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && cat > .htaccess << 'EOF'
+Options +FollowSymLinks -Indexes
+DirectoryIndex index.html index.php
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_URI} ^/admin [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_URI} ^/storage [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
+EOF
+chmod 644 .htaccess && chmod 644 index.html && echo "✅ .htaccess corrigido!" && echo "" && echo "Teste agora: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+
+Este comando:
+1. Garante que DirectoryIndex prioriza index.html
+2. Configura as regras de rewrite corretamente
+3. Ajusta permissões
+
+Se ainda der 403, o problema é o Document Root.
+Contate o suporte do Hostinger para alterar para public_html.
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,29 @@
+═══════════════════════════════════════════════════════════════
+✅ SOLUÇÃO COMPLETA - ERRO 403
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1️⃣ Corrigindo .htaccess na raiz..." && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Arquivos existentes - servir diretamente
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar tudo para public/ (exceto se já estiver em public/)
+  RewriteCond %{REQUEST_URI} !^/public/
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess na raiz corrigido" && echo "" && echo "2️⃣ Verificando .htaccess em public/..." && cd public && if [ -f ".htaccess" ]; then echo "✅ .htaccess existe"; else echo "⚠️  .htaccess não existe em public/"; fi && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

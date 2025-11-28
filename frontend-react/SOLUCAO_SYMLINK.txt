@@ -1,0 +1,22 @@
+═══════════════════════════════════════════════════════════════
+✅ SOLUÇÃO RÁPIDA - CRIAR SYMLINK
+═══════════════════════════════════════════════════════════════
+
+A solução mais simples: criar um symlink de /assets/ para /app/assets/
+
+═══════════════════════════════════════════════════════════════
+
+COMANDO COMPLETO:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && ln -s app/assets assets && echo "✅ Symlink criado" && ls -la | grep assets && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+
+O que isso faz:
+- Cria um link simbólico de /assets/ apontando para /app/assets/
+- Quando o navegador buscar /assets/index-R46pBGYW.css, vai encontrar em /app/assets/
+- Não precisa modificar o index.html
+- Não precisa rebuild do React
+
+═══════════════════════════════════════════════════════════════
+

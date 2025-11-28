@@ -1,0 +1,60 @@
+═══════════════════════════════════════════════════════════════
+🔄 REVERTER - EXECUTAR DIRETO NO SSH (VOCÊ JÁ ESTÁ CONECTADO!)
+═══════════════════════════════════════════════════════════════
+
+Você já está no servidor! Não precisa fazer upload.
+Apenas cole este comando completo e execute:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "🔄 REVERTENDO PARA ESTRUTURA ORIGINAL..." && echo "" && echo "1️⃣ Deletando arquivos do React..." && rm -f index.html index_laravel.php && rm -rf assets && echo "   ✅ Arquivos do React deletados" && echo "" && echo "2️⃣ Restaurando index.php original..." && cat > index.php << 'INDEXEOF'
+<?php
+
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+require __DIR__.'/../vendor/autoload.php';
+
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$kernel = $app->make(Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response);
+INDEXEOF
+chmod 644 index.php && echo "   ✅ index.php restaurado" && echo "" && echo "3️⃣ Restaurando .htaccess original..." && cat > .htaccess << 'HTACCESSEOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+HTACCESSEOF
+chmod 644 .htaccess && echo "   ✅ .htaccess restaurado" && echo "" && echo "4️⃣ Limpando cache do Laravel..." && cd .. && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan optimize:clear && echo "   ✅ Cache limpo" && echo "" && echo "═══════════════════════════════════════════════════════════════" && echo "✅ REVERSÃO CONCLUÍDA!" && echo "═══════════════════════════════════════════════════════════════" && echo "" && echo "🧪 TESTAR:" && echo "   🌐 https://betgeniusbr.com/" && echo "   🔐 https://betgeniusbr.com/admin" && echo ""
+
+═══════════════════════════════════════════════════════════════
+

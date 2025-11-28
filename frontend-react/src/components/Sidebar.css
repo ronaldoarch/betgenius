@@ -1,0 +1,226 @@
+.sidebar {
+  width: 250px;
+  background: #00152f;
+  border-radius: 10px;
+  padding: 15px;
+  height: fit-content;
+  position: sticky;
+  top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Botões Superiores */
+.sidebar-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sidebar-btn {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s;
+  text-align: left;
+}
+
+.sidebar-btn-missoes {
+  background: #b22e2e;
+}
+
+.sidebar-btn-missoes:hover {
+  background: #c93a3a;
+  transform: translateY(-2px);
+}
+
+.sidebar-btn-vip {
+  background: #df7800;
+}
+
+.sidebar-btn-vip:hover {
+  background: #f08800;
+  transform: translateY(-2px);
+}
+
+.sidebar-btn-promocoes {
+  background: #7e14bb;
+}
+
+.sidebar-btn-promocoes:hover {
+  background: #8f1acc;
+  transform: translateY(-2px);
+}
+
+.sidebar-btn-icon {
+  font-size: 20px;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+/* Seção CASSINO */
+.sidebar-section {
+  margin-bottom: 15px;
+}
+
+.sidebar-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sidebar-title {
+  color: #01b7fc;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-chevron {
+  color: #01b7fc;
+  font-size: 12px;
+  transition: transform 0.3s;
+  transform: rotate(180deg);
+}
+
+.sidebar-chevron.open {
+  transform: rotate(0deg);
+}
+
+.sidebar-menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sidebar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.sidebar-menu-item:hover {
+  background: rgba(1, 183, 252, 0.1);
+  color: #01b7fc;
+}
+
+.sidebar-menu-icon {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Links Inferiores */
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid rgba(1, 183, 252, 0.2);
+}
+
+.sidebar-footer-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.sidebar-footer-item:hover {
+  background: rgba(1, 183, 252, 0.1);
+  color: #01b7fc;
+}
+
+.sidebar-footer-icon {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+    padding: 12px;
+  }
+
+  .sidebar-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 70px;
+    height: calc(100vh - 70px);
+    width: 280px;
+    z-index: 999;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+    padding: 15px;
+    border-radius: 0;
+  }
+
+  .sidebar.mobile-open {
+    left: 0;
+  }
+
+  .sidebar-buttons {
+    gap: 8px;
+  }
+
+  .sidebar-btn {
+    padding: 12px 15px;
+    font-size: 13px;
+  }
+
+  .sidebar-menu-item,
+  .sidebar-footer-item {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+}
+

@@ -1,0 +1,19 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR INDEX.HTML E ASSETS
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando index.html..." && if [ -f "public/index.html" ]; then echo "✅ index.html existe!"; ls -lh public/index.html; echo ""; echo "Conteúdo:"; cat public/index.html; else echo "❌ index.html NÃO existe!"; fi && echo "" && echo "2. Verificando assets..." && echo "Procurando index-DrMwNlRZ.js:" && find public/ -name "index-DrMwNlRZ.js" 2>/dev/null && echo "Procurando index-R46pBGYW.css:" && find public/ -name "index-R46pBGYW.css" 2>/dev/null && echo "" && echo "3. Verificando estrutura..." && if [ -d "public/assets" ]; then echo "public/assets/ existe:"; ls -la public/assets/ | head -5; ls -ld public/assets/; fi && if [ -d "public/app/assets" ]; then echo "public/app/assets/ existe:"; ls -la public/app/assets/ | head -5; fi && echo "" && echo "4. Todos os arquivos .js e .css:" && find public/ -name "*.js" -type f | head -3 && find public/ -name "*.css" -type f | head -3
+
+═══════════════════════════════════════════════════════════════
+
+Este comando vai mostrar:
+- Se index.html existe e seu conteúdo
+- Onde estão os arquivos JavaScript e CSS do React
+- A estrutura de diretórios de assets
+
+═══════════════════════════════════════════════════════════════
+

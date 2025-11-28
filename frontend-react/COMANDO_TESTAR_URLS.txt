@@ -1,0 +1,18 @@
+═══════════════════════════════════════════════════════════════
+🔍 TESTAR URLs DAS IMAGENS
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para testar se as imagens são acessíveis:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Testando logo:" && HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png) && if [ "$HTTP_CODE" = "200" ]; then echo "✅ Logo acessível (HTTP 200)"; else echo "❌ Logo NÃO acessível (HTTP $HTTP_CODE)"; fi && echo "" && echo "2. Testando banner:" && HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/storage/01KA9S09Z85AV3205AQ8C71B6T.JPG) && if [ "$HTTP_CODE" = "200" ]; then echo "✅ Banner acessível (HTTP 200)"; else echo "❌ Banner NÃO acessível (HTTP $HTTP_CODE)"; fi && echo "" && echo "3. Buscando banners em public/storage:" && find public/storage -type f \( -name "*.jpg" -o -name "*.JPG" -o -name "*.png" \) 2>/dev/null | head -5
+
+═══════════════════════════════════════════════════════════════
+
+Se as URLs retornarem HTTP 200, as imagens estão acessíveis.
+O problema pode ser cache do navegador ou o frontend não está
+carregando corretamente.
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,48 @@
+═══════════════════════════════════════════════════════════════
+🔧 OTIMIZAR .htaccess PARA SERVIR STORAGE DIRETAMENTE
+═══════════════════════════════════════════════════════════════
+
+O problema dos erros 503 pode ser que arquivos de storage estão
+passando pelo PHP. Vamos otimizar o .htaccess:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Storage - Servir arquivos estáticos diretamente (evitar passar pelo PHP)
+RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# API, Admin e Storage → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/api [NC,OR]
+RewriteCond %{REQUEST_URI} ^/admin [NC,OR]
+RewriteCond %{REQUEST_URI} ^/storage [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Arquivos e diretórios existentes → Servir diretamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess otimizado!" && sleep 3 && echo "" && echo "Testando:" && curl -s -I https://betgeniusbr.com/storage/Games/Pragmatic_Oficial/vs10amm.webp | head -3
+
+═══════════════════════════════════════════════════════════════
+
+A mudança importante é que agora arquivos em /storage/ que existem
+são servidos diretamente, sem passar pelo PHP, evitando timeouts.
+
+═══════════════════════════════════════════════════════════════
+

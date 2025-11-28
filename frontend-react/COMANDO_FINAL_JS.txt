@@ -1,0 +1,79 @@
+═══════════════════════════════════════════════════════════════
+🚀 SOLUÇÃO FINAL - ARQUIVOS JAVASCRIPT
+═══════════════════════════════════════════════════════════════
+
+Execute este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) && cp public/.htaccess public/.htaccess.backup.$(date +%Y%m%d_%H%M%S) && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/javascript mjs
+    AddType text/javascript js
+    AddType text/css css
+</IfModule>
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+EOF
+chmod 644 .htaccess && cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    RewriteEngine On
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/javascript mjs
+    AddType text/javascript js
+    AddType text/css css
+    AddType image/svg+xml svg svgz
+    AddType application/json json
+    AddType application/wasm wasm
+    AddType font/woff2 woff2
+    AddType font/woff woff
+    AddType font/ttf ttf
+</IfModule>
+<FilesMatch "\.(js|mjs)$">
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/javascript; charset=utf-8"
+    </IfModule>
+</FilesMatch>
+EOF
+chmod 644 public/.htaccess && chmod -R 755 public/build/ && chmod -R 644 public/build/assets/*.js 2>/dev/null && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan optimize:clear && echo "✅ .htaccess corrigido em ambos os locais!"
+
+═══════════════════════════════════════════════════════════════
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+3. Os arquivos JavaScript devem carregar corretamente
+
+═══════════════════════════════════════════════════════════════
+

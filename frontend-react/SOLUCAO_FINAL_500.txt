@@ -1,0 +1,88 @@
+═══════════════════════════════════════════════════════════════
+✅ SOLUÇÃO FINAL - ERRO 500
+═══════════════════════════════════════════════════════════════
+
+O problema pode ser o Document Root. Vamos criar .htaccess em ambos os lugares.
+
+═══════════════════════════════════════════════════════════════
+
+COMANDO COMPLETO:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1️⃣ Verificando estrutura..." && ls -la public/app/assets/ 2>&1 | head -3 && echo "" && echo "2️⃣ Criando .htaccess na raiz (se Document Root apontar para public_html)..." && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Arquivos existentes - servir diretamente
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ public/index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ public/index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ public/ [L]
+
+  # React está em public/app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ public/app/ [L]
+
+  # Todas as outras rotas vão para o React em public/app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/public/app/
+  RewriteRule ^(.*)$ public/app/$1 [L]
+</IfModule>
+
+DirectoryIndex public/app/index.html public/index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess na raiz criado" && echo "" && echo "3️⃣ Criando .htaccess em public/..." && cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Arquivos existentes - servir diretamente
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 public/.htaccess && echo "✅ .htaccess em public/ criado" && echo "" && echo "4️⃣ Ajustando permissões..." && chmod 755 public/app/ && chmod 644 public/app/index.html && chmod 755 public/app/assets/ && chmod 644 public/app/assets/* 2>/dev/null && echo "✅ Permissões ajustadas" && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

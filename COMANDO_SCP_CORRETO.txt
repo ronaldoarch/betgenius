@@ -1,0 +1,14 @@
+===========================================
+COMANDO SCP CORRETO
+===========================================
+
+Execute este comando no terminal:
+
+scp /Users/ronaldodiasdesousa/Desktop/Projetos/cassino-saulo/frontend-completo-home.html u127271520@betgeniusbr.com:/home/u127271520/domains/betgeniusbr.com/public_html/public/
+
+OU, se você já estiver no diretório do projeto:
+
+cd /Users/ronaldodiasdesousa/Desktop/Projetos/cassino-saulo
+scp frontend-completo-home.html u127271520@betgeniusbr.com:/home/u127271520/domains/betgeniusbr.com/public_html/public/
+
+===========================================

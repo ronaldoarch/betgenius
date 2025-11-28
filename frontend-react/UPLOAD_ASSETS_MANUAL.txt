@@ -1,0 +1,45 @@
+═══════════════════════════════════════════════════════════════
+📤 UPLOAD DOS ARQUIVOS ASSETS - MANUAL
+═══════════════════════════════════════════════════════════════
+
+Os arquivos existem no seu computador mas não estão no servidor!
+
+═══════════════════════════════════════════════════════════════
+
+OPÇÃO 1: Via SCP (do seu computador)
+
+No terminal LOCAL (não SSH), execute:
+
+cd /Users/ronaldodiasdesousa/Desktop/Projetos/cassino-saulo/frontend-react
+
+scp -P 65002 dist/assets/index-DrMwNlRZ.js u127271520@betgeniusbr.com:/home/u127271520/domains/betgeniusbr.com/public_html/public/app/assets/
+
+scp -P 65002 dist/assets/index-R46pBGYW.css u127271520@betgeniusbr.com:/home/u127271520/domains/betgeniusbr.com/public_html/public/app/assets/
+
+═══════════════════════════════════════════════════════════════
+
+OPÇÃO 2: Via Gerenciador de Arquivos
+
+1. Abra o gerenciador de arquivos do servidor
+2. Vá para: public_html/public/app/assets/
+3. Faça upload de:
+   - frontend-react/dist/assets/index-DrMwNlRZ.js
+   - frontend-react/dist/assets/index-R46pBGYW.css
+
+═══════════════════════════════════════════════════════════════
+
+DEPOIS DO UPLOAD: Ajustar permissões (via SSH)
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public/app/assets
+chmod 644 index-*.js index-*.css
+ls -la index-*.js index-*.css
+
+═══════════════════════════════════════════════════════════════
+
+TESTAR:
+
+Limpe o cache do navegador (Ctrl+Shift+R) e teste:
+https://betgeniusbr.com/
+
+═══════════════════════════════════════════════════════════════
+

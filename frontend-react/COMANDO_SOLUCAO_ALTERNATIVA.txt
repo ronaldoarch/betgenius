@@ -1,0 +1,44 @@
+═══════════════════════════════════════════════════════════════
+🔧 SOLUÇÃO ALTERNATIVA - CRIAR INDEX.PHP NA RAIZ
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cat > index.php << 'EOFINDEX'
+<?php
+if (file_exists(__DIR__ . '/public/index.html')) {
+    readfile(__DIR__ . '/public/index.html');
+    exit;
+} else {
+    header('Location: /public/');
+    exit;
+}
+EOFINDEX
+chmod 644 index.php && cat > .htaccess << 'EOF'
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+DirectoryIndex index.php index.html
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+chmod 644 .htaccess && chmod 755 . && chmod 755 public/ && echo "✅ Solução aplicada!" && echo "" && echo "Teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+
+Esta solução:
+1. Cria um index.php na raiz que serve o conteúdo de public/index.html
+2. Atualiza o .htaccess para priorizar index.php
+3. Garante que a raiz funcione mesmo se o .htaccess não processar corretamente
+
+Depois de executar:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+
+═══════════════════════════════════════════════════════════════

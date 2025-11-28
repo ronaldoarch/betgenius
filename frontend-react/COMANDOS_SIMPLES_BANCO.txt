@@ -1,0 +1,34 @@
+═══════════════════════════════════════════════════════════════
+🔧 COMANDOS SIMPLES - SEM CARACTERES ESPECIAIS
+═══════════════════════════════════════════════════════════════
+
+Execute um por vez:
+
+═══════════════════════════════════════════════════════════════
+
+1. Testar localhost:
+
+mysql -u u911385553_boraganhar -p'2403Auror@' -h localhost u911385553_boraganhar -e "SELECT 1;"
+
+═══════════════════════════════════════════════════════════════
+
+2. Verificar .env:
+
+cat .env | grep DB_HOST
+
+═══════════════════════════════════════════════════════════════
+
+3. Limpar cache:
+
+php artisan config:clear
+php artisan cache:clear
+rm -f bootstrap/cache/config.php
+
+═══════════════════════════════════════════════════════════════
+
+4. Testar Laravel:
+
+php artisan tinker --execute="DB::connection()->getPdo();"
+
+═══════════════════════════════════════════════════════════════
+

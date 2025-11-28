@@ -1,0 +1,96 @@
+═══════════════════════════════════════════════════════════════
+🧹 LIMPAR CACHE DO NAVEGADOR
+═══════════════════════════════════════════════════════════════
+
+Se o admin em /zirigui funcionou, o problema é CACHE DO NAVEGADOR!
+
+───────────────────────────────────────────────────────────────
+
+SOLUÇÃO RÁPIDA:
+
+1. No Chrome/Edge:
+   - Pressione: Ctrl+Shift+Delete (Windows/Linux) ou Cmd+Shift+Delete (Mac)
+   - Selecione: "Imagens e arquivos em cache"
+   - Período: "Última hora" ou "Todo o período"
+   - Clique em "Limpar dados"
+
+2. OU use Hard Refresh:
+   - Pressione: Ctrl+Shift+R (Windows/Linux) ou Cmd+Shift+R (Mac)
+   - Isso força o navegador a recarregar tudo
+
+3. OU abra em Modo Anônimo:
+   - Pressione: Ctrl+Shift+N (Windows/Linux) ou Cmd+Shift+N (Mac)
+   - Acesse: https://betgeniusbr.com/zirigui
+   - Se funcionar, confirma que é cache
+
+───────────────────────────────────────────────────────────────
+
+SE AINDA NÃO FUNCIONAR:
+
+Execute no SSH para garantir que o .htaccess está correto:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# Verificar .htaccess em public/
+cat public/.htaccess | grep -A 5 "zirigui"
+
+# Se não mostrar a regra correta, execute:
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Admin (zirigui) → Laravel index.php (ANTES DE TUDO!)
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ index.php [L]
+
+    # API → Laravel index.php
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # Storage → Servir diretamente
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Redirect Trailing Slashes
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React index.html
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+═══════════════════════════════════════════════════════════════
+

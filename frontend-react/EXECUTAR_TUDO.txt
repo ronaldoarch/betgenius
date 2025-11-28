@@ -1,0 +1,52 @@
+═══════════════════════════════════════════════════════════════
+🚀 EXECUTAR TUDO - SOLUÇÃO COMPLETA
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH (faz tudo de uma vez):
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "1️⃣ Criando symlink..." && if [ ! -L "assets" ]; then ln -s app/assets assets && echo "✅ Symlink criado"; else echo "⚠️  Symlink já existe"; fi && echo "" && echo "2️⃣ Corrigindo index.html..." && cd app && cp index.html index.html.backup && sed -i 's|href="/assets/|href="/app/assets/|g' index.html && sed -i 's|src="/assets/|src="/app/assets/|g' index.html && echo "✅ index.html corrigido" && echo "" && echo "3️⃣ Atualizando .htaccess..." && cd .. && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Permitir acesso direto a arquivos e diretórios existentes
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar /assets/ para /app/assets/
+  RewriteCond %{REQUEST_URI} ^/assets/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^assets/(.*)$ app/assets/$1 [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess atualizado" && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,47 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR .htaccess NA RAIZ
+═══════════════════════════════════════════════════════════════
+
+O problema pode ser um .htaccess na raiz interferindo!
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar se há .htaccess na raiz:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && if [ -f ".htaccess" ]; then echo "=== .htaccess na raiz ===" && cat .htaccess; else echo "⚠️  Não há .htaccess na raiz"; fi
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Se houver .htaccess na raiz, fazer backup e criar um novo:
+
+if [ -f ".htaccess" ]; then
+    cp .htaccess .htaccess.backup
+    echo "✅ Backup criado"
+    cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Arquivos existentes - servir diretamente
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar tudo para public/
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+EOF
+    chmod 644 .htaccess
+    echo "✅ .htaccess na raiz atualizado"
+fi
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Verificar .htaccess em public/:
+
+cd public && if [ -f ".htaccess" ]; then echo "=== .htaccess em public/ ===" && cat .htaccess | head -30; else echo "⚠️  Não há .htaccess em public/"; fi
+
+═══════════════════════════════════════════════════════════════
+

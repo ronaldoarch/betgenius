@@ -1,0 +1,12 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR ESTRUTURA COMPLETA
+═══════════════════════════════════════════════════════════════
+
+Execute para encontrar onde estão os arquivos:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "=== Estrutura public/ ===" && ls -la && echo "" && echo "=== Estrutura app/ ===" && ls -la app/ 2>&1 && echo "" && echo "=== Procurar arquivos index-*.css e index-*.js ===" && find . -name "index-*.css" -o -name "index-*.js" 2>&1 | head -10 && echo "" && echo "=== Procurar pastas assets ===" && find . -type d -name "assets" 2>&1 && echo "" && echo "=== Verificar index.html ===" && if [ -f "app/index.html" ]; then grep -E "assets|\.js|\.css" app/index.html | head -5; else echo "index.html não encontrado em app/"; find . -name "index.html" 2>&1; fi
+
+═══════════════════════════════════════════════════════════════
+

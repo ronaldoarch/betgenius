@@ -1,0 +1,48 @@
+═══════════════════════════════════════════════════════════════
+🚀 COMANDO PARA CORRIGIR AdminPanelProvider
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+# 1. Ir para o diretório
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 2. Fazer backup
+cp app/Providers/Filament/AdminPanelProvider.php app/Providers/Filament/AdminPanelProvider.php.backup.$(date +%Y%m%d_%H%M%S)
+
+# 3. Corrigir a linha 76 (adicionar valor padrão)
+sed -i 's/->path(env("FILAMENT_BASE_URL"))/->path(env("FILAMENT_BASE_URL", "admin"))/' app/Providers/Filament/AdminPanelProvider.php
+
+# 4. Verificar se foi corrigido
+grep -n "->path" app/Providers/Filament/AdminPanelProvider.php
+
+# 5. Limpar cache
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+
+# 6. Otimizar
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 7. Verificar erros
+tail -10 storage/logs/laravel.log | grep -i "error\|exception" || echo "✅ Nenhum erro recente encontrado"
+
+═══════════════════════════════════════════════════════════════
+
+Correção aplicada:
+✅ Adicionado valor padrão "admin" para FILAMENT_BASE_URL
+
+Se a variável de ambiente não existir, usará "admin" como padrão.
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste as APIs
+
+═══════════════════════════════════════════════════════════════
+

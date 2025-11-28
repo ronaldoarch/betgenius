@@ -1,0 +1,44 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR INDEX.PHP NA RAIZ - NÃO INTERFERIR COM API
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA:
+O index.php na raiz está servindo HTML para requisições de API.
+Vamos corrigir para redirecionar API/admin/storage para public/index.php.
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp index.php index.php.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > index.php << 'EOFINDEX'
+<?php
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+if (preg_match('#^/(api|admin|storage)#', $requestUri)) {
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+    require __DIR__ . '/public/index.php';
+    exit;
+}
+$indexPath = __DIR__ . '/public/index.html';
+if (file_exists($indexPath)) {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile($indexPath);
+    exit;
+}
+header('Location: /public/');
+exit;
+EOFINDEX
+chmod 644 index.php && echo "✅ index.php corrigido!" && sleep 3 && echo "" && echo "Testando API..." && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games | head -c 500
+
+═══════════════════════════════════════════════════════════════
+
+O que foi corrigido:
+- index.php na raiz: Redireciona /api, /admin, /storage para public/index.php
+- index.php na raiz: Serve index.html apenas para outras rotas
+- Isso garante que a API seja processada pelo Laravel
+
+Depois de executar:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+3. Os dados devem carregar agora!
+
+═══════════════════════════════════════════════════════════════

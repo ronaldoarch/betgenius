@@ -1,0 +1,22 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR .HTACCESS NA RAIZ (public_html/)
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando .htaccess na raiz..." && if [ -f ".htaccess" ]; then echo "✅ .htaccess existe"; echo ""; echo "Conteúdo:"; cat .htaccess; else echo "❌ .htaccess NÃO existe na raiz!"; fi && echo "" && echo "2. Verificando estrutura..." && ls -la | grep -E "index\.|\.htaccess" | head -5 && echo "" && echo "3. Verificando public/..." && ls -la public/ | grep -E "index\.|\.htaccess" | head -5
+
+═══════════════════════════════════════════════════════════════
+
+Este comando verifica:
+- Se .htaccess existe na raiz (public_html/)
+- Seu conteúdo
+- Estrutura de arquivos
+
+Se o Document Root está em public_html, o .htaccess na raiz
+deve redirecionar para public/
+
+═══════════════════════════════════════════════════════════════
+

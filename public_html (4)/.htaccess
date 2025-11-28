@@ -1,0 +1,31 @@
+DirectoryIndex index.php index.html
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# PRIMEIRO: Servir arquivos e diretórios existentes diretamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# SEGUNDO: Storage → Verificar se arquivo existe em public/storage/ e servir diretamente
+RewriteCond %{REQUEST_URI} ^/storage/(.+)$ [NC]
+RewriteCond %{DOCUMENT_ROOT}/public/storage/%1 -f
+RewriteRule ^storage/(.+)$ public/storage/$1 [L]
+
+# TERCEIRO: API, Admin (zirigui) ou Storage (arquivo não existe) → index.php na raiz
+RewriteCond %{REQUEST_URI} ^/(api|zirigui|storage) [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# QUARTO: Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Impede acesso ao arquivo .env
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>

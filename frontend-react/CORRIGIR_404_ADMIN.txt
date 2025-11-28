@@ -1,0 +1,167 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR 404 NO ADMIN - ROTEAMENTO /ZIRIGUI/*
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: 404 em /zirigui/banners/44/edit
+CAUSA: Requisições /zirigui/* não estão sendo roteadas para Laravel
+
+───────────────────────────────────────────────────────────────
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Verificar .htaccess atual
+echo "=== .htaccess na raiz ==="
+cat .htaccess
+echo ""
+echo "=== .htaccess em public/ ==="
+cat public/.htaccess
+echo ""
+
+# 2. Verificar se index.php existe em public/
+echo "=== Verificando public/index.php ==="
+if [ -f "public/index.php" ]; then
+    echo "✅ public/index.php existe"
+    head -5 public/index.php
+else
+    echo "❌ public/index.php NÃO existe!"
+fi
+echo ""
+
+# 3. Corrigir .htaccess na raiz (garantir que /zirigui/* seja roteado para public/index.php)
+cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Admin (zirigui) → Redirecionar para public/ (que roteará para Laravel)
+RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+RewriteRule ^(.*)$ public/$1 [L]
+
+# API → Redirecionar para public/ (que roteará para Laravel)
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Storage → Servir diretamente se arquivo existir
+RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+
+echo "✅ .htaccess na raiz atualizado"
+echo ""
+
+# 4. Corrigir .htaccess em public/ (garantir que /zirigui/* seja roteado para Laravel)
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Admin (zirigui) → Laravel (index.php) - ANTES de tudo
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ index.php [L]
+
+    # API → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # Storage → Servir diretamente se arquivo existir
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React (index.html)
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/zirigui
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+echo "✅ .htaccess em public/ atualizado"
+echo ""
+
+# 5. Limpar cache
+echo "=== Limpando cache ==="
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+echo "✅ Cache limpo"
+echo ""
+
+# 6. Verificar rotas do Filament
+echo "=== Verificando rotas do Filament ==="
+php artisan route:list | grep -i "zirigui\|banner" | head -10
+echo ""
+
+# 7. Testar acesso direto ao index.php
+echo "=== Testando acesso direto ==="
+echo "Teste no navegador: https://betgeniusbr.com/public/index.php"
+echo ""
+
+echo "═══════════════════════════════════════════════════════════════"
+echo "✅ CORREÇÃO CONCLUÍDA"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "💡 Se ainda não funcionar:"
+echo "   1. Verifique se o Document Root está apontando para public_html (não public_html/public)"
+echo "   2. Aguarde 2-3 minutos e tente novamente"
+echo "   3. Limpe o cache do navegador (Ctrl+Shift+R)"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

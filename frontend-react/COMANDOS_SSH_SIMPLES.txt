@@ -1,0 +1,56 @@
+═══════════════════════════════════════════════════════════════
+🔧 COMANDOS PARA EXECUTAR VIA SSH
+═══════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANTE: Esses comandos devem ser executados NO SERVIDOR via SSH,
+não no seu MacBook local!
+
+═══════════════════════════════════════════════════════════════
+
+📋 PASSO 1: Conectar ao servidor via SSH
+
+No terminal do seu MacBook, execute:
+
+ssh -p 65002 u127271520@betgeniusbr.com
+
+(Use a senha do servidor quando solicitado)
+
+═══════════════════════════════════════════════════════════════
+
+📋 PASSO 2: Executar comandos no servidor
+
+Depois de conectar, execute:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# Criar symlink do storage
+php artisan storage:link
+
+# Verificar se foi criado
+ls -la public/storage
+
+# Verificar logo
+find storage/app/public/uploads -name "*Nx72GR0pqlAV*"
+
+═══════════════════════════════════════════════════════════════
+
+📋 COMANDO COMPLETO (copie e cole tudo de uma vez):
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && php artisan storage:link && echo "✅ Symlink criado!" && ls -la public/storage | head -3 && echo "" && echo "Verificando logo:" && find storage/app/public/uploads -name "*Nx72GR0pqlAV*" 2>/dev/null | head -3
+
+═══════════════════════════════════════════════════════════════
+
+💡 ALTERNATIVA: Se você não tem acesso SSH direto
+
+1. Acesse o painel de controle do hosting (hPanel)
+2. Procure por "Terminal" ou "SSH"
+3. Execute os comandos lá
+
+OU
+
+1. Acesse o File Manager do hosting
+2. Verifique se existe: public/storage → storage/app/public
+3. Se não existir, crie manualmente ou use o painel
+
+═══════════════════════════════════════════════════════════════
+

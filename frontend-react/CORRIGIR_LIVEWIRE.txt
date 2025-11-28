@@ -1,0 +1,158 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR LIVEWIRE - REQUISIÇÕES RETORNANDO HTML
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: Livewire recebe HTML ao invés de JSON
+CAUSA: Requisições /zirigui/livewire/* estão sendo interceptadas
+
+───────────────────────────────────────────────────────────────
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Verificar se há index.php na raiz (pode estar interferindo)
+echo "=== Verificando index.php na raiz ==="
+if [ -f "index.php" ]; then
+    echo "⚠️ index.php existe na raiz"
+    head -5 index.php
+    echo ""
+    echo "Vamos renomeá-lo para backup..."
+    mv index.php index.php.backup.$(date +%Y%m%d_%H%M%S)
+    echo "✅ index.php renomeado"
+else
+    echo "✅ Não há index.php na raiz"
+fi
+echo ""
+
+# 2. Corrigir .htaccess na raiz (garantir que /zirigui/* seja roteado ANTES de tudo)
+cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Admin (zirigui) e Livewire → Executar index.php na raiz ANTES de tudo
+RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+RewriteRule ^ index.php [L]
+
+# API → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^ index.php [L]
+
+# Storage → Servir diretamente se arquivo existir
+RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+
+echo "✅ .htaccess na raiz atualizado"
+echo ""
+
+# 3. Corrigir .htaccess em public/ (garantir que /zirigui/* seja roteado ANTES de tudo)
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Admin (zirigui) e Livewire → Laravel (index.php) - ANTES de tudo
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ index.php [L]
+
+    # API → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # Storage → Servir diretamente se arquivo existir
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React (index.html)
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/zirigui
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+echo "✅ .htaccess em public/ atualizado"
+echo ""
+
+# 4. Limpar cache
+echo "=== Limpando cache ==="
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+echo "✅ Cache limpo"
+echo ""
+
+# 5. Testar uma requisição Livewire
+echo "=== Testando requisição Livewire ==="
+curl -s -H "Accept: application/json" -H "X-Livewire: true" "https://betgeniusbr.com/zirigui/livewire/update" | head -20
+echo ""
+echo ""
+
+echo "═══════════════════════════════════════════════════════════════"
+echo "✅ CORREÇÃO CONCLUÍDA"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "💡 Agora:"
+echo "   1. Recarregue a página do admin (Ctrl+Shift+R ou Cmd+Shift+R)"
+echo "   2. Tente salvar o banner novamente"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

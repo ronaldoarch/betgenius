@@ -1,0 +1,49 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR DOCUMENT ROOT E CORRIGIR 403
+═══════════════════════════════════════════════════════════════
+
+O erro 403 pode ser porque o Document Root está apontando para public_html/
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar estrutura e .htaccess:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "=== .htaccess na raiz ===" && cat .htaccess && echo "" && echo "=== Estrutura ===" && ls -la | head -10
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Se o Document Root aponta para public_html/, precisamos permitir acesso:
+
+# Opção A: Remover .htaccess da raiz temporariamente
+mv .htaccess .htaccess.disabled && echo "✅ .htaccess desabilitado (teste)"
+
+# Ou Opção B: Corrigir .htaccess para permitir acesso
+cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Permitir acesso direto a arquivos
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar para public/ apenas se não for arquivo/diretório
+  RewriteCond %{REQUEST_URI} !^/public/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+EOF
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Verificar se public/index.php existe e tem permissão:
+
+ls -la public/index.php
+chmod 644 public/index.php
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 TESTE SIMPLES - VER CÓDIGOS HTTP
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH (mostra apenas os códigos HTTP):
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "Testando URLs..." && echo "" && echo "1. /public/index.html:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/public/index.html && echo "" && echo "2. / (raiz):" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/ && echo "" && echo "3. /teste.txt:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/teste.txt && echo "" && echo "4. /assets/index-DrMwNlRZ.js:" && curl -s -o /dev/null -w "   Status: %{http_code}\n" https://betgeniusbr.com/assets/index-DrMwNlRZ.js && echo "" && echo "═══════════════════════════════════════════════════════════════" && echo "INTERPRETAÇÃO:" && echo "- 200 = Sucesso" && echo "- 403 = Acesso negado" && echo "- 404 = Não encontrado" && echo "═══════════════════════════════════════════════════════════════"
+
+═══════════════════════════════════════════════════════════════
+
+Este comando mostra apenas os códigos HTTP (200, 403, 404, etc.)
+sem informações de progresso do curl.
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,47 @@
+═══════════════════════════════════════════════════════════════
+🔧 FAZER BUILD DO REACT E UPLOAD DOS ARQUIVOS
+═══════════════════════════════════════════════════════════════
+
+Os arquivos CSS/JS não existem. Precisamos fazer build e upload.
+
+═══════════════════════════════════════════════════════════════
+
+PASSO 1: No seu computador, fazer build:
+
+cd /Users/ronaldodiasdesousa/Desktop/Projetos/cassino-saulo/frontend-react
+npm run build
+
+═══════════════════════════════════════════════════════════════
+
+PASSO 2: Verificar arquivos gerados:
+
+ls -lh dist/assets/
+
+# Deve mostrar:
+# index-*.js
+# index-*.css
+
+═══════════════════════════════════════════════════════════════
+
+PASSO 3: Upload dos arquivos para o servidor:
+
+# Via SCP (do seu computador):
+scp -P 65002 dist/assets/index-*.js u127271520@betgeniusbr.com:/home/u127271520/domains/betgeniusbr.com/public_html/public/app/assets/
+scp -P 65002 dist/assets/index-*.css u127271520@betgeniusbr.com:/home/u127271520/domains/betgeniusbr.com/public_html/public/app/assets/
+
+# Ou fazer upload via gerenciador de arquivos:
+# - Local: frontend-react/dist/assets/index-*.js
+# - Remoto: public_html/public/app/assets/
+# - Local: frontend-react/dist/assets/index-*.css
+# - Remoto: public_html/public/app/assets/
+
+═══════════════════════════════════════════════════════════════
+
+PASSO 4: Ajustar permissões no servidor (via SSH):
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public/app/assets
+chmod 644 index-*.js index-*.css
+ls -la index-*.js index-*.css
+
+═══════════════════════════════════════════════════════════════
+

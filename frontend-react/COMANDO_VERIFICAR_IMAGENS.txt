@@ -1,0 +1,19 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR SE AS IMAGENS EXISTEM NO SERVIDOR
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para verificar se as imagens existem:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando storage:" && ls -la public/storage 2>/dev/null | head -5 && echo "" && echo "2. Buscando logo:" && LOGO_PATH=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_white":"[^"]*' | cut -d'"' -f4) && echo "Logo path: $LOGO_PATH" && if [ -f "storage/app/public/$LOGO_PATH" ]; then echo "✅ Logo existe em storage/app/public"; else echo "❌ Logo NÃO existe em storage/app/public"; fi && if [ -f "public/storage/$LOGO_PATH" ]; then echo "✅ Logo existe em public/storage"; else echo "❌ Logo NÃO existe em public/storage"; fi && echo "" && echo "3. Buscando banner:" && BANNER_IMAGE=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners | grep -o '"image":"[^"]*' | head -1 | cut -d'"' -f4) && echo "Banner image: $BANNER_IMAGE" && if [ -f "storage/app/public/$BANNER_IMAGE" ]; then echo "✅ Banner existe em storage/app/public"; else echo "❌ Banner NÃO existe em storage/app/public"; fi && if [ -f "public/storage/$BANNER_IMAGE" ]; then echo "✅ Banner existe em public/storage"; else echo "❌ Banner NÃO existe em public/storage"; fi
+
+═══════════════════════════════════════════════════════════════
+
+Este comando vai verificar:
+1. Se o symlink public/storage existe
+2. Se o logo existe nos caminhos esperados
+3. Se o banner existe nos caminhos esperados
+
+═══════════════════════════════════════════════════════════════
+

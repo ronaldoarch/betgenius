@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 TESTE FINAL - VERIFICAR DOCUMENT ROOT REAL
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "TESTE RAIZ" > teste_raiz.txt && chmod 644 teste_raiz.txt && echo "TESTE PUBLIC" > public/teste_public.txt && chmod 644 public/teste_public.txt && echo "Testando arquivos..." && echo "" && echo "1. /teste_raiz.txt:" && STATUS1=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/teste_raiz.txt) && echo "   Status: $STATUS1" && echo "" && echo "2. /teste_public.txt:" && STATUS2=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/teste_public.txt) && echo "   Status: $STATUS2" && echo "" && echo "3. /public/teste_public.txt:" && STATUS3=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/public/teste_public.txt) && echo "   Status: $STATUS3" && echo "" && echo "4. / (raiz):" && STATUS4=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/) && echo "   Status: $STATUS4" && echo "" && echo "═══════════════════════════════════════════════════════════════" && echo "DIAGNÓSTICO:" && if [ "$STATUS1" = "200" ] && [ "$STATUS4" = "403" ]; then echo "⚠️  Document Root está em public_html, mas raiz retorna 403"; echo "   Problema pode ser .htaccess ou permissões"; elif [ "$STATUS1" = "404" ] && [ "$STATUS3" = "200" ]; then echo "⚠️  Document Root está em public_html/public"; echo "   Contate suporte para alterar para public_html"; elif [ "$STATUS4" = "200" ]; then echo "✅ Site funcionando!"; else echo "⚠️  Verifique os status acima"; fi
+
+═══════════════════════════════════════════════════════════════
+
+Este teste cria arquivos de teste e verifica qual é o
+Document Root real baseado nos acessos HTTP.
+
+═══════════════════════════════════════════════════════════════
+

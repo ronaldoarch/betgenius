@@ -1,0 +1,49 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR CONFLITO DE CLASSE - COMANDOS SSH
+═══════════════════════════════════════════════════════════════
+
+Erro: RoleRelationManager declarada duas vezes
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Limpar cache de configuração (sem recriar):
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && php artisan config:clear
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Limpar cache do composer:
+
+composer dump-autoload -o
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Verificar se o arquivo duplicado existe:
+
+ls -la app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Se o arquivo existir, fazer backup e deletar:
+
+# Fazer backup
+cp app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php.backup
+
+# Deletar (o pacote vendor já tem essa classe)
+rm -f app/Filament/Resources/PermissionResource/RelationManager/RoleRelationManager.php
+
+═══════════════════════════════════════════════════════════════
+
+5️⃣ Limpar todos os caches novamente:
+
+php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && composer dump-autoload -o && echo "✅ Cache limpo"
+
+═══════════════════════════════════════════════════════════════
+
+6️⃣ Testar novamente:
+
+# Não criar config:cache por enquanto, apenas limpar
+php artisan config:clear
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,44 @@
+═══════════════════════════════════════════════════════════════
+🔧 SOLUÇÃO FINAL - .htaccess não deve redirecionar API
+═══════════════════════════════════════════════════════════════
+
+O problema é que o .htaccess está redirecionando API para public/ antes
+que o index.php na raiz possa interceptar. Vamos corrigir:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# API, Admin e Storage → NÃO redirecionar, deixar index.php na raiz lidar
+RewriteCond %{REQUEST_URI} ^/api [NC,OR]
+RewriteCond %{REQUEST_URI} ^/admin [NC,OR]
+RewriteCond %{REQUEST_URI} ^/storage [NC]
+RewriteRule ^ - [L]
+
+# Arquivos e diretórios existentes → Servir diretamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+chmod 644 .htaccess && echo "OK .htaccess corrigido" && sleep 3 && echo "" && echo "Testando API..." && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games/all | head -c 300
+
+═══════════════════════════════════════════════════════════════
+
+Se ainda não funcionar, verifique se o index.php na raiz existe:
+
+═══════════════════════════════════════════════════════════════
+
+ls -la /home/u127271520/domains/betgeniusbr.com/public_html/index.php
+
+═══════════════════════════════════════════════════════════════
+

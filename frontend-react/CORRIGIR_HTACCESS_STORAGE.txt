@@ -1,0 +1,213 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .HTACCESS PARA SERVIR /STORAGE/ CORRETAMENTE
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: URLs /storage/ retornam text/html ao invés de image/png
+CAUSA: .htaccess não está servindo arquivos estáticos de /storage/
+
+───────────────────────────────────────────────────────────────
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Verificar .htaccess atual na raiz
+echo "=== .htaccess na raiz ==="
+cat .htaccess
+echo ""
+
+# 2. Verificar .htaccess em public/
+echo "=== .htaccess em public/ ==="
+cat public/.htaccess
+echo ""
+
+# 3. Corrigir .htaccess na raiz (garantir que /storage/ seja servido diretamente)
+cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# /storage/ → Servir diretamente (arquivos estáticos)
+RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# API → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^ index.php [L]
+
+# Admin/Zirigui → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/(admin|zirigui) [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/(admin|zirigui) [NC]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/(admin|zirigui) [NC]
+RewriteRule ^ index.php [L]
+
+# Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+
+echo "✅ .htaccess na raiz atualizado"
+echo ""
+
+# 4. Corrigir .htaccess em public/ (garantir que storage/ seja servido diretamente)
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # /storage/ → Servir diretamente (arquivos estáticos)
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # API → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # Admin/Zirigui → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/(admin|zirigui) [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/(admin|zirigui) [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/(admin|zirigui) [NC]
+    RewriteRule ^ index.php [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React (index.html)
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/(admin|zirigui)
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+echo "✅ .htaccess em public/ atualizado"
+echo ""
+
+# 5. Verificar se o symlink está correto
+echo "=== Verificando symlink ==="
+if [ -L "public/storage" ]; then
+    echo "✅ Symlink existe:"
+    ls -la public/storage
+    echo ""
+    echo "Verificando se aponta para o lugar certo:"
+    readlink -f public/storage
+else
+    echo "❌ Symlink não existe!"
+fi
+echo ""
+
+# 6. Verificar se os arquivos existem
+echo "=== Verificando arquivos ==="
+LOGO_WHITE=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_white":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g')
+LOGO_BLACK=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_black":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g')
+
+if [ -n "$LOGO_WHITE" ]; then
+    if [ -f "public/storage/$LOGO_WHITE" ]; then
+        echo "✅ Logo White existe: public/storage/$LOGO_WHITE"
+        ls -lh "public/storage/$LOGO_WHITE"
+    else
+        echo "❌ Logo White NÃO existe: public/storage/$LOGO_WHITE"
+    fi
+fi
+
+if [ -n "$LOGO_BLACK" ]; then
+    if [ -f "public/storage/$LOGO_BLACK" ]; then
+        echo "✅ Logo Black existe: public/storage/$LOGO_BLACK"
+        ls -lh "public/storage/$LOGO_BLACK"
+    else
+        echo "❌ Logo Black NÃO existe: public/storage/$LOGO_BLACK"
+    fi
+fi
+echo ""
+
+# 7. Testar URLs após 3 segundos
+echo "=== Testando URLs (aguarde 3 segundos) ==="
+sleep 3
+
+if [ -n "$LOGO_WHITE" ]; then
+    LOGO_WHITE_URL="https://betgeniusbr.com/storage/$LOGO_WHITE"
+    echo "Testando: $LOGO_WHITE_URL"
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I "$LOGO_WHITE_URL")
+    CONTENT_TYPE=$(curl -s -o /dev/null -w "%{content_type}" -I "$LOGO_WHITE_URL")
+    echo "HTTP: $HTTP_CODE | Content-Type: $CONTENT_TYPE"
+    if [ "$HTTP_CODE" = "200" ] && [[ "$CONTENT_TYPE" == *"image"* ]]; then
+        echo "✅ Logo White está sendo servido corretamente!"
+    else
+        echo "❌ Logo White ainda não está sendo servido como imagem"
+    fi
+fi
+
+if [ -n "$LOGO_BLACK" ]; then
+    LOGO_BLACK_URL="https://betgeniusbr.com/storage/$LOGO_BLACK"
+    echo "Testando: $LOGO_BLACK_URL"
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I "$LOGO_BLACK_URL")
+    CONTENT_TYPE=$(curl -s -o /dev/null -w "%{content_type}" -I "$LOGO_BLACK_URL")
+    echo "HTTP: $HTTP_CODE | Content-Type: $CONTENT_TYPE"
+    if [ "$HTTP_CODE" = "200" ] && [[ "$CONTENT_TYPE" == *"image"* ]]; then
+        echo "✅ Logo Black está sendo servido corretamente!"
+    else
+        echo "❌ Logo Black ainda não está sendo servido como imagem"
+    fi
+fi
+
+echo ""
+echo "═══════════════════════════════════════════════════════════════"
+echo "✅ CORREÇÃO CONCLUÍDA"
+echo "═══════════════════════════════════════════════════════════════"
+
+═══════════════════════════════════════════════════════════════
+

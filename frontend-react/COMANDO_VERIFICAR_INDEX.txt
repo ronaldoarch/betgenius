@@ -1,0 +1,37 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR SE INDEX.HTML EXISTE E ESTÁ CONFIGURADO
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "Verificando index.html..." && if [ -f "public/index.html" ]; then echo "✅ index.html existe!"; ls -lh public/index.html; echo ""; echo "Primeiras linhas:"; head -5 public/index.html; else echo "❌ index.html NÃO existe!"; echo ""; echo "⚠️  Você precisa fazer upload:"; echo "   frontend-react/dist/index.html → public_html/public/index.html"; fi && echo "" && echo "Verificando assets..." && if [ -d "public/assets" ]; then echo "✅ assets/ existe"; ls -1 public/assets/ | head -5; else echo "⚠️  assets/ NÃO existe"; echo "   Faça upload: frontend-react/dist/assets/* → public_html/public/assets/*"; fi && echo "" && echo "Verificando .htaccess..." && if grep -q "DirectoryIndex index.html" public/.htaccess 2>/dev/null; then echo "✅ .htaccess está configurado corretamente"; else echo "⚠️  Atualizando .htaccess..."; cat > public/.htaccess << 'EOF'
+Options +FollowSymLinks -Indexes
+DirectoryIndex index.html index.php
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_URI} ^/admin [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_URI} ^/storage [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
+EOF
+chmod 644 public/.htaccess && echo "✅ .htaccess atualizado"; fi && echo "" && echo "✅ Verificação concluída!"
+
+═══════════════════════════════════════════════════════════════
+
+Depois de executar:
+- Se index.html existir: Teste https://betgeniusbr.com/
+- Se não existir: Faça upload do index.html e assets do React
+
+═══════════════════════════════════════════════════════════════
+

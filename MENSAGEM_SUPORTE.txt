@@ -1,0 +1,32 @@
+URGENTE - Servidor Sobrecarregado
+
+Olá,
+
+Meu site está apresentando erros 503 e o servidor está completamente sobrecarregado.
+
+PROBLEMA:
+- Load average: 9.16, 8.82, 8.65 (extremamente alto)
+- Erro: "fork: Resource temporarily unavailable" - servidor não consegue criar novos processos
+- 47 processos lsphp rodando simultaneamente
+- Site retornando erro 503 (Service Unavailable)
+
+DIAGNÓSTICO:
+- Meus processos têm uso de CPU muito baixo (0.2%)
+- Memória disponível: 298GB (não é problema de memória)
+- O problema parece ser de infraestrutura do servidor compartilhado
+
+EVIDÊNCIAS:
+- Não consigo executar comandos simples (fork error)
+- Site não está respondendo corretamente
+- Load muito alto sem processos meus usando CPU
+
+SOLICITAÇÃO:
+Por favor, verifiquem:
+1. Por que o load está tão alto?
+2. Há outros usuários sobrecarregando o servidor?
+3. Os limites de processos foram excedidos?
+4. Podem reiniciar serviços ou processos travados?
+5. Há algum processo específico causando o problema?
+
+Obrigado!
+

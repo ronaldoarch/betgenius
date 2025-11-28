@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+vendor/
+frontend-react/node_modules/
+frontend-react/dist/
+
+# Environment
+.env
+.env.backup
+.env.example
+.env.local
+
+# Laravel
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Arquivos grandes e backups
+*.zip
+*.tar
+*.tar.gz
+*.rar
+* - cópia*
+* - backup*
+*cópia*
+*backup*

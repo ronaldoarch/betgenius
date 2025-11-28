@@ -1,0 +1,31 @@
+═══════════════════════════════════════════════════════════════
+✅ CORRIGIR ERRO 403 - SOLUÇÃO DEFINITIVA
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1️⃣ Fazendo backup do .htaccess..." && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) && echo "✅ Backup criado" && echo "" && echo "2️⃣ Criando .htaccess que permite acesso..." && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Permitir acesso direto a arquivos e diretórios
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar para public/ apenas se não for arquivo/diretório existente
+  RewriteCond %{REQUEST_URI} !^/public/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess corrigido" && echo "" && echo "3️⃣ Verificando permissões..." && chmod 644 public/index.php 2>/dev/null && chmod 755 public/ 2>/dev/null && echo "✅ Permissões OK" && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

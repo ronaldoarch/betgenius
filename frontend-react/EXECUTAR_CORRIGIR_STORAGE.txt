@@ -1,0 +1,80 @@
+═══════════════════════════════════════════════════════════════
+🔧 EXECUTAR SCRIPT PARA CORRIGIR STORAGE
+═══════════════════════════════════════════════════════════════
+
+OPÇÃO 1: Enviar o script e executar
+───────────────────────────────────────────────────────────────
+
+1. Envie o arquivo CORRIGIR_STORAGE_FIX.sh para o servidor
+2. Execute:
+
+   chmod +x CORRIGIR_STORAGE_FIX.sh
+   bash CORRIGIR_STORAGE_FIX.sh
+
+───────────────────────────────────────────────────────────────
+
+OPÇÃO 2: Executar comandos diretamente (sem !)
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Verificar
+if [ -L "public/storage" ]; then echo "É symlink"; elif [ -d "public/storage" ]; then echo "É diretório real"; else echo "Não existe"; fi
+
+# 2. Mover arquivos se necessário
+if [ -d "public/storage" ]; then
+    if [ -L "public/storage" ]; then
+        echo "Já é symlink"
+    else
+        mkdir -p storage/app/public/uploads
+        cp -r public/storage/uploads/* storage/app/public/uploads/ 2>/dev/null
+        echo "Arquivos copiados"
+    fi
+fi
+
+# 3. Remover e recriar symlink
+rm -rf public/storage
+php artisan storage:link 2>&1 | grep -v "namespace\|class\|protected\|public\|function\|this->call" || true
+
+if [ -L "public/storage" ]; then
+    echo "Symlink criado"
+else
+    ln -s ../storage/app/public public/storage
+    echo "Symlink criado manualmente"
+fi
+
+# 4. Verificar logos
+LOGO_WHITE=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_white":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g')
+LOGO_BLACK=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_black":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g')
+
+echo "Logo White: $LOGO_WHITE"
+echo "Logo Black: $LOGO_BLACK"
+
+if [ -n "$LOGO_WHITE" ] && [ -f "storage/app/public/$LOGO_WHITE" ]; then
+    echo "Logo White existe"
+else
+    echo "Logo White NÃO existe"
+fi
+
+if [ -n "$LOGO_BLACK" ] && [ -f "storage/app/public/$LOGO_BLACK" ]; then
+    echo "Logo Black existe"
+else
+    echo "Logo Black NÃO existe"
+fi
+
+# 5. Testar URLs
+sleep 2
+if [ -n "$LOGO_WHITE" ]; then
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I "https://betgeniusbr.com/storage/$LOGO_WHITE")
+    CONTENT_TYPE=$(curl -s -o /dev/null -w "%{content_type}" -I "https://betgeniusbr.com/storage/$LOGO_WHITE")
+    echo "Logo White: HTTP $HTTP_CODE | $CONTENT_TYPE"
+fi
+
+if [ -n "$LOGO_BLACK" ]; then
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -I "https://betgeniusbr.com/storage/$LOGO_BLACK")
+    CONTENT_TYPE=$(curl -s -o /dev/null -w "%{content_type}" -I "https://betgeniusbr.com/storage/$LOGO_BLACK")
+    echo "Logo Black: HTTP $HTTP_CODE | $CONTENT_TYPE"
+fi
+
+═══════════════════════════════════════════════════════════════
+

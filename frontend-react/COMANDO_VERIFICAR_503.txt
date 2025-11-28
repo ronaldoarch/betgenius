@@ -1,0 +1,19 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR ERROS 503
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para verificar os erros 503:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Testando /api/profile/mywallet:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/profile/mywallet | head -c 300 && echo "" && echo "" && echo "2. Testando /api/profile/wallet:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/profile/wallet | head -c 300 && echo "" && echo "" && echo "3. Verificando log:" && tail -100 storage/logs/laravel.log | grep -i "503\|timeout\|memory" | tail -20
+
+═══════════════════════════════════════════════════════════════
+
+Os erros 503 podem ser causados por:
+1. Timeout do PHP (muitas requisições simultâneas)
+2. Problema no index.php da raiz
+3. Falta de autenticação (mas deveria retornar 401, não 503)
+
+═══════════════════════════════════════════════════════════════
+

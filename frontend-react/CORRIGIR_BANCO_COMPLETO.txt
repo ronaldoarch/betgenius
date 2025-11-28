@@ -1,0 +1,12 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR BANCO DE DADOS - COMANDO COMPLETO
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1️⃣ Testando conexão MySQL..." && mysql -u u911385553_boraganhar -p'2403Auror@' -h 127.0.0.1 u911385553_boraganhar -e "SELECT 1;" 2>&1 && echo "✅ Conexão MySQL OK!" || (echo "❌ Erro com 127.0.0.1, tentando localhost..." && mysql -u u911385553_boraganhar -p'2403Auror@' -h localhost u911385553_boraganhar -e "SELECT 1;" 2>&1 && echo "✅ Conexão MySQL OK com localhost!" && sed -i 's/DB_HOST=127.0.0.1/DB_HOST=localhost/' .env && echo "✅ .env atualizado para localhost") && echo "" && echo "2️⃣ Limpando cache completamente..." && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && rm -f bootstrap/cache/config.php && echo "✅ Cache limpo" && echo "" && echo "3️⃣ Testando conexão via Laravel..." && php artisan tinker --execute="try { DB::connection()->getPdo(); echo '✅ Conexão Laravel OK!'; } catch(Exception \$e) { echo '❌ Erro Laravel: ' . \$e->getMessage(); }" && echo "" && echo "✅ PRONTO! Teste o site: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

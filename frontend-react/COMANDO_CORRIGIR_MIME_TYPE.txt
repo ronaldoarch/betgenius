@@ -1,0 +1,59 @@
+═══════════════════════════════════════════════════════════════
+🚀 CORRIGIR MIME TYPE DOS ARQUIVOS JAVASCRIPT
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp public/.htaccess public/.htaccess.backup.$(date +%Y%m%d_%H%M%S) && cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # IMPORTANTE: Permitir acesso direto a arquivos estáticos
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Send Requests To Front Controller (apenas se não for arquivo/diretório)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Configurar MIME types corretos
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/javascript mjs
+    AddType text/css css
+    AddType image/svg+xml svg svgz
+    AddType application/json json
+    AddType application/wasm wasm
+</IfModule>
+EOF
+chmod 644 public/.htaccess && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan optimize:clear && echo "✅ MIME types corrigidos!"
+
+═══════════════════════════════════════════════════════════════
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+3. Os arquivos JavaScript devem carregar corretamente
+
+═══════════════════════════════════════════════════════════════
+

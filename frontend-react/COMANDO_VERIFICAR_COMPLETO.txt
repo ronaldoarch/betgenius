@@ -1,0 +1,21 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAÇÃO COMPLETA - Symlink e Arquivos
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para verificar tudo:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando symlink:" && if [ -L public/storage ]; then echo "✅ É symlink - Destino: $(readlink -f public/storage)"; else echo "❌ NÃO é symlink"; fi && echo "" && echo "2. Listando uploads:" && ls -la storage/app/public/uploads 2>/dev/null | head -10 && echo "" && echo "3. Listando public/storage:" && ls -la public/storage 2>/dev/null | head -10 && echo "" && echo "4. Buscando PNG/JPG:" && find storage/app/public -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.JPG" \) 2>/dev/null | head -5 && echo "" && echo "5. Testando URL do logo:" && HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png) && if [ "$HTTP_CODE" = "200" ]; then echo "✅ Logo acessível (HTTP 200)"; else echo "❌ Logo NÃO acessível (HTTP $HTTP_CODE)"; fi
+
+═══════════════════════════════════════════════════════════════
+
+Este comando vai verificar:
+1. Se o symlink está correto
+2. Listar arquivos em uploads
+3. Listar arquivos em public/storage
+4. Buscar arquivos PNG/JPG
+5. Testar se o logo é acessível via URL
+
+═══════════════════════════════════════════════════════════════
+

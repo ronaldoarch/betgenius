@@ -1,0 +1,25 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR FUNCIONALIDADES DO ADMIN NO SITE
+═══════════════════════════════════════════════════════════════
+
+Execute no SSH para verificar se as APIs estão retornando os dados:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando Settings (logo):" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_[^"]*":"[^"]*"' | head -2 && echo "" && echo "2. Verificando Banners:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners | grep -o '"id"' | wc -l && echo "banners encontrados" && echo "" && echo "3. Testando URL de um logo:" && LOGO_PATH=$(curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_white":"[^"]*' | cut -d'"' -f4 | sed 's/\\//g') && if [ ! -z "$LOGO_PATH" ]; then echo "Logo path: $LOGO_PATH" && curl -s -I "https://betgeniusbr.com/storage/$LOGO_PATH" | head -3; else echo "Logo não encontrado na API"; fi
+
+═══════════════════════════════════════════════════════════════
+
+💡 O React JÁ ESTÁ CONFIGURADO para buscar:
+   ✅ Logo no header (software_logo_white)
+   ✅ Logo no loading (software_logo_black)
+   ✅ Banners do carrossel (tipo 'carousel')
+   ✅ Banners TOP (tipo 'home' ou 'top')
+
+═══════════════════════════════════════════════════════════════
+
+📋 Para que apareça no site:
+   1. Faça upload dos logos via admin: /zirigui → Settings
+   2. Crie banners via admin: /zirigui → Banners
+   3. Verifique se as imagens estão sendo servidas corretamente
+
+═══════════════════════════════════════════════════════════════
+

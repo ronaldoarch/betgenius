@@ -1,0 +1,82 @@
+═══════════════════════════════════════════════════════════════
+🔧 SOLUÇÃO SIMPLES PARA ERRO 403
+═══════════════════════════════════════════════════════════════
+
+O erro 403 significa que o servidor está bloqueando o acesso.
+
+═══════════════════════════════════════════════════════════════
+PASSO 1: VERIFICAR NO HPANEL (MAIS IMPORTANTE!)
+═══════════════════════════════════════════════════════════════
+
+1. Abra seu navegador
+2. Acesse: https://hpanel.hostinger.com/
+3. Faça login
+4. Clique em "Domínios" (no menu lateral)
+5. Encontre "betgeniusbr.com" na lista
+6. Clique em "Gerenciar" ou "Configurações"
+7. Procure por "Document Root" ou "Raiz do Documento"
+8. Veja o que está escrito lá:
+   
+   ❌ Se estiver: public_html/public
+   ✅ Deve estar: public_html (SEM o /public no final)
+   
+9. Se estiver errado:
+   - Clique em "Editar" ou "Alterar"
+   - Mude para: public_html
+   - Clique em "Salvar"
+   - AGUARDE 3 MINUTOS
+
+═══════════════════════════════════════════════════════════════
+PASSO 2: EXECUTAR NO SSH
+═══════════════════════════════════════════════════════════════
+
+Depois de alterar no hPanel, abra o SSH e execute:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+rm -f index.php
+
+cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+EOF
+
+chmod 644 .htaccess
+chmod 755 .
+chmod 755 public/
+
+echo "✅ Pronto!"
+
+═══════════════════════════════════════════════════════════════
+PASSO 3: TESTAR
+═══════════════════════════════════════════════════════════════
+
+1. Feche e abra o navegador novamente
+2. Acesse: https://betgeniusbr.com/
+3. Se ainda der erro, aguarde mais 2 minutos e tente de novo
+
+═══════════════════════════════════════════════════════════════
+RESUMO
+═══════════════════════════════════════════════════════════════
+
+O problema é que o Document Root no hPanel está apontando para
+o lugar errado. Ele deve apontar para "public_html" e NÃO para
+"public_html/public".
+
+Depois de corrigir isso, execute os comandos no SSH.
+
+═══════════════════════════════════════════════════════════════
+

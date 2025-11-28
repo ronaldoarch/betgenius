@@ -1,0 +1,56 @@
+.deposit-page {
+  width: 100%;
+}
+
+.content-box {
+  background: #021c47;
+  padding: 30px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.content-box h2 {
+  margin-bottom: 20px;
+  color: #01b7fc;
+}
+
+.quick-amounts {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.quick-amount-btn {
+  padding: 10px 20px;
+  background: #002769;
+  color: #ffffff;
+  border: 1px solid #01b7fc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.quick-amount-btn:hover {
+  background: #01b7fc;
+}
+
+.qrcode-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: #002769;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.qrcode-text {
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 12px;
+  background: #ffffff;
+  color: #030c16;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+

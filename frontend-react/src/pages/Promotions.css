@@ -1,0 +1,22 @@
+.promotions-page {
+  width: 100%;
+}
+
+.promotion-card {
+  background: #002769;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.promotion-card h3 {
+  color: #01b7fc;
+  margin-bottom: 15px;
+}
+
+.promotion-image {
+  max-width: 100%;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+

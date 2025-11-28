@@ -1,0 +1,44 @@
+═══════════════════════════════════════════════════════════════
+🔧 VERIFICAR BANCO DE DADOS - COMANDOS SSH
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no servidor SSH:
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar configurações do banco no .env:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cat .env | grep DB_
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Testar conexão com o banco:
+
+php artisan tinker --execute="DB::connection()->getPdo(); echo 'Conexão OK!';"
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Limpar cache e testar novamente:
+
+php artisan config:clear && php artisan cache:clear && php artisan config:cache && echo "✅ Cache limpo"
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Verificar se MySQL está rodando:
+
+systemctl status mysql || service mysql status
+
+═══════════════════════════════════════════════════════════════
+
+5️⃣ Se precisar atualizar senha no .env:
+
+# Fazer backup primeiro
+cp .env .env.backup
+
+# Editar .env (substitua SUA_SENHA pela senha correta)
+nano .env
+# Ou use sed:
+# sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=SUA_SENHA/' .env
+
+═══════════════════════════════════════════════════════════════
+

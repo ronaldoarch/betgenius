@@ -1,0 +1,55 @@
+═══════════════════════════════════════════════════════════════
+🚀 SOLUÇÃO ALTERNATIVA - ERRO 403
+═══════════════════════════════════════════════════════════════
+
+Esta solução cria um index.php na raiz que redireciona para public/
+(Útil quando o .htaccess não funciona)
+
+Execute este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cat > index.php << 'EOF'
+<?php
+/**
+ * Redireciona para public/index.php
+ */
+if (file_exists(__DIR__ . '/public/index.php')) {
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
+    $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '/';
+    require __DIR__ . '/public/index.php';
+} else {
+    http_response_code(500);
+    die('Erro: public/index.php não encontrado!');
+}
+EOF
+chmod 644 index.php && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+<Files index.php>
+    Order allow,deny
+    Allow from all
+</Files>
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+EOF
+chmod 644 .htaccess && chmod 755 . && chmod 755 public/ && chmod 644 public/index.php && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan optimize:clear && echo "✅ Solução alternativa aplicada!"
+
+═══════════════════════════════════════════════════════════════
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+
+⚠️  Se ainda não funcionar, verifique o Document Root no hPanel:
+   - Deve estar: public_html (SEM /public)
+
+═══════════════════════════════════════════════════════════════
+

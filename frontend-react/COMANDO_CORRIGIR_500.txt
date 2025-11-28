@@ -1,0 +1,76 @@
+═══════════════════════════════════════════════════════════════
+🚀 COMANDO PARA CORRIGIR ERROS 500 NAS APIs
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH (um por vez):
+
+═══════════════════════════════════════════════════════════════
+
+# 1. Ir para o diretório
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 2. Limpar cache do Laravel
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+
+# 3. Verificar permissões
+chmod -R 755 storage bootstrap/cache
+chmod 644 .env
+
+# 4. Verificar .htaccess em public/
+cat public/.htaccess
+
+# 5. Se o .htaccess não existir ou estiver errado, criar:
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+EOF
+
+chmod 644 public/.htaccess
+
+# 6. Verificar últimos erros nos logs
+tail -30 storage/logs/laravel.log | grep -i "error\|exception\|500" | tail -5
+
+# 7. Otimizar aplicação
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 8. Verificar rotas da API
+php artisan route:list --path=api | head -10
+
+═══════════════════════════════════════════════════════════════
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste as APIs:
+   - https://betgeniusbr.com/api/settings/data
+   - https://betgeniusbr.com/api/categories
+
+Se ainda houver erros, verifique os logs:
+tail -50 storage/logs/laravel.log
+
+═══════════════════════════════════════════════════════════════
+

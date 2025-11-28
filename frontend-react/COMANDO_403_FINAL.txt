@@ -1,0 +1,39 @@
+═══════════════════════════════════════════════════════════════
+🚀 COMANDO ÚNICO - SOLUÇÃO 403
+═══════════════════════════════════════════════════════════════
+
+Cole este comando COMPLETO no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1️⃣ Fazendo backup..." && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cp index.php index.php.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && echo "✅ Backup criado" && echo "" && echo "2️⃣ Criando index.php na raiz..." && cat > index.php << 'EOFINDEX'
+<?php
+/**
+ * Redireciona para public/index.php
+ */
+if (file_exists(__DIR__ . '/public/index.php')) {
+    require __DIR__ . '/public/index.php';
+} else {
+    http_response_code(500);
+    die('Erro: public/index.php não encontrado!');
+}
+EOFINDEX
+chmod 644 index.php && echo "✅ index.php criado" && echo "" && echo "3️⃣ Criando .htaccess..." && cat > .htaccess << 'EOFHTACCESS'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<Files index.php>
+  Order allow,deny
+  Allow from all
+</Files>
+EOFHTACCESS
+chmod 644 .htaccess && echo "✅ .htaccess criado" && echo "" && echo "4️⃣ Verificando permissões..." && chmod 755 public/ 2>/dev/null && chmod 644 public/index.php 2>/dev/null && echo "✅ Permissões OK" && echo "" && echo "═══════════════════════════════════════════════════════════════" && echo "✅ PRONTO! Limpe o cache (Ctrl+Shift+R) e teste: https://betgeniusbr.com/" && echo "" && echo "⚠️  Se ainda não funcionar, altere o Document Root no hPanel:" && echo "   public_html → public_html (deve estar assim)" && echo "═══════════════════════════════════════════════════════════════"
+
+═══════════════════════════════════════════════════════════════
+

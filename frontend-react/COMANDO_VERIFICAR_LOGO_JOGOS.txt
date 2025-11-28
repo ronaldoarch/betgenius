@@ -1,0 +1,19 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR LOGO E ERRO 500 EM JOGOS
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para verificar:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando logo:" && if [ -f "public/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" ]; then echo "✅ Logo existe"; else echo "❌ Logo NÃO existe"; find . -name "Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" 2>/dev/null | head -3; fi && echo "" && echo "2. Testando URL do logo:" && HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png) && echo "HTTP Code: $HTTP_CODE" && curl -s -I https://betgeniusbr.com/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png | grep -i "content-type" && echo "" && echo "3. Testando /api/games/single/1500:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games/single/1500 | head -c 300
+
+═══════════════════════════════════════════════════════════════
+
+Este comando vai verificar:
+1. Se o arquivo do logo existe
+2. Se o logo é acessível via URL
+3. Por que o jogo ID 1500 está dando erro 500
+
+═══════════════════════════════════════════════════════════════
+

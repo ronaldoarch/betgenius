@@ -1,0 +1,193 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR /ZIRIGUI - SOLUÇÃO FINAL
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: /zirigui ainda está carregando React
+CAUSA: Document Root ou .htaccess não está funcionando
+
+───────────────────────────────────────────────────────────────
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Verificar Document Root (criar arquivo de teste)
+echo "=== Verificando Document Root ==="
+echo "<?php echo 'Document Root: ' . \$_SERVER['DOCUMENT_ROOT'] . PHP_EOL; echo 'Script Name: ' . \$_SERVER['SCRIPT_NAME'] . PHP_EOL; ?>" > teste_docroot.php
+echo "Acesse: https://betgeniusbr.com/teste_docroot.php"
+echo "Deve mostrar: Document Root: /home/u127271520/domains/betgeniusbr.com/public_html"
+echo ""
+
+# 2. Remover index.php da raiz se existir
+if [ -f "index.php" ]; then
+    echo "⚠️ index.php existe na raiz - removendo..."
+    mv index.php index.php.backup.$(date +%Y%m%d_%H%M%S)
+    echo "✅ index.php removido"
+else
+    echo "✅ Não há index.php na raiz"
+fi
+echo ""
+
+# 3. Verificar .htaccess atual
+echo "=== .htaccess atual na raiz ==="
+cat .htaccess
+echo ""
+echo "=== .htaccess atual em public/ ==="
+cat public/.htaccess
+echo ""
+
+# 4. Criar .htaccess na raiz - VERSÃO SIMPLIFICADA E ROBUSTA
+cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Admin (zirigui) → public/ (Laravel)
+RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+RewriteRule ^(.*)$ public/$1 [L]
+
+# API → public/ (Laravel)
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^(.*)$ public/$1 [L]
+
+# Storage → Servir diretamente
+RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Tudo mais → public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+
+echo "✅ .htaccess na raiz atualizado"
+echo ""
+
+# 5. Criar .htaccess em public/ - VERSÃO SIMPLIFICADA E ROBUSTA
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Admin (zirigui) → Laravel index.php (ANTES DE TUDO!)
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ index.php [L]
+
+    # API → Laravel index.php
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # Storage → Servir diretamente
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Redirect Trailing Slashes
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React index.html (APENAS se não for /zirigui ou /api)
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+echo "✅ .htaccess em public/ atualizado"
+echo ""
+
+# 6. Verificar se public/index.php existe
+if [ -f "public/index.php" ]; then
+    echo "✅ public/index.php existe"
+else
+    echo "❌ public/index.php NÃO existe!"
+fi
+echo ""
+
+# 7. Verificar se public/index.html existe (React)
+if [ -f "public/index.html" ]; then
+    echo "✅ public/index.html existe (React)"
+else
+    echo "⚠️ public/index.html NÃO existe"
+fi
+echo ""
+
+# 8. Testar roteamento via curl
+echo "=== Testando roteamento ==="
+echo "Testando /zirigui:"
+curl -s -I "https://betgeniusbr.com/zirigui" | head -3
+echo ""
+echo "Testando /api/settings/data:"
+curl -s -I "https://betgeniusbr.com/api/settings/data" | head -3
+echo ""
+
+# 9. Limpar cache
+echo "=== Limpando cache ==="
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+echo "✅ Cache limpo"
+echo ""
+
+echo "═══════════════════════════════════════════════════════════════"
+echo "✅ CORREÇÃO CONCLUÍDA"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "💡 PRÓXIMOS PASSOS:"
+echo "   1. Acesse: https://betgeniusbr.com/teste_docroot.php"
+echo "      Verifique se Document Root está correto"
+echo ""
+echo "   2. Se Document Root estiver errado:"
+echo "      - Acesse hPanel: https://hpanel.hostinger.com/"
+echo "      - Vá em: Domínios → betgeniusbr.com"
+echo "      - Altere Document Root para: public_html"
+echo "      - Aguarde 3-5 minutos"
+echo ""
+echo "   3. Limpe o cache do navegador (Ctrl+Shift+R)"
+echo ""
+echo "   4. Acesse: https://betgeniusbr.com/zirigui"
+echo "      Deve carregar o admin do Filament"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

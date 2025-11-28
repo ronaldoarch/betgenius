@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR ONDE ESTÁ O ARQUIVO DE STORAGE
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para verificar onde está o arquivo:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando arquivo:" && if [ -f "public/storage/Games/Pragmatic_Oficial/vs10amm.webp" ]; then echo "✅ Arquivo existe"; ls -lh "public/storage/Games/Pragmatic_Oficial/vs10amm.webp"; else echo "❌ Arquivo NÃO existe"; fi && echo "" && echo "2. Verificando symlink:" && if [ -L public/storage ]; then echo "✅ É symlink - Destino: $(readlink -f public/storage)"; else echo "⚠️ NÃO é symlink"; fi && echo "" && echo "3. Buscando arquivo:" && find . -name "vs10amm.webp" 2>/dev/null | head -3
+
+═══════════════════════════════════════════════════════════════
+
+Se o arquivo não existir, pode ser que precise ser criado ou
+que o caminho no banco de dados esteja incorreto.
+
+═══════════════════════════════════════════════════════════════
+

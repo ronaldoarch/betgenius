@@ -1,0 +1,71 @@
+═══════════════════════════════════════════════════════════════
+🔍 INFORMAÇÕES IMPORTANTES
+═══════════════════════════════════════════════════════════════
+
+📌 DESCOBERTA IMPORTANTE:
+
+O admin NÃO está em /admin, está em /zirigui!
+
+No arquivo .env está configurado:
+FILAMENT_BASE_URL=zirigui
+
+Portanto, o admin está em:
+https://betgeniusbr.com/zirigui
+
+═══════════════════════════════════════════════════════════════
+
+🔧 PROBLEMAS IDENTIFICADOS:
+
+1. ❌ Logo não encontrado no servidor
+   - Arquivo: Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png
+   - Não existe em storage/app/public/uploads/
+   - URL retorna HTML ao invés de imagem
+
+2. ⚠️  Symlink do storage pode não estar criado
+   - Execute: php artisan storage:link
+
+3. ✅ Admin está acessível em /zirigui (não /admin)
+
+═══════════════════════════════════════════════════════════════
+
+🔧 COMANDO PARA CORRIGIR:
+
+Execute no SSH:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && bash CORRIGIR_LOGO_E_ADMIN.sh
+
+OU execute manualmente:
+
+# 1. Criar symlink
+php artisan storage:link
+
+# 2. Verificar se o logo existe
+find storage/app/public/uploads -name "*Nx72GR0pqlAV*"
+
+# 3. Se não existir, fazer upload via admin:
+#    https://betgeniusbr.com/zirigui
+
+# 4. Verificar .htaccess em public/storage
+cat public/storage/.htaccess
+
+# Se não existir, criar:
+cat > public/storage/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine Off
+</IfModule>
+EOF
+
+═══════════════════════════════════════════════════════════════
+
+💡 SOLUÇÃO PARA O LOGO:
+
+O logo não existe no servidor. Você precisa:
+
+1. Acessar o admin: https://betgeniusbr.com/zirigui
+2. Ir em Configurações → Settings
+3. Fazer upload do logo novamente
+4. Ou copiar o arquivo manualmente para:
+   storage/app/public/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png
+
+═══════════════════════════════════════════════════════════════
+

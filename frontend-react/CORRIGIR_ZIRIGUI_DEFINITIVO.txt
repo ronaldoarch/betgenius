@@ -1,0 +1,160 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR /ZIRIGUI - DEFINITIVO
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: /zirigui está carregando React ao invés do admin Filament
+SOLUÇÃO: Garantir que /zirigui/* seja roteado para Laravel ANTES de tudo
+
+───────────────────────────────────────────────────────────────
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Remover index.php da raiz se existir (pode estar interferindo)
+if [ -f "index.php" ]; then
+    echo "⚠️ Removendo index.php da raiz..."
+    mv index.php index.php.backup.$(date +%Y%m%d_%H%M%S)
+    echo "✅ index.php removido"
+fi
+
+# 2. Corrigir .htaccess na raiz - ORDEM É CRÍTICA!
+cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# PRIMEIRO: Servir arquivos e diretórios existentes diretamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# SEGUNDO: Admin (zirigui) → Redirecionar para public/ (que roteará para Laravel)
+# Esta regra DEVE vir ANTES da regra genérica no final
+RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+RewriteRule ^(.*)$ public/$1 [L]
+
+# TERCEIRO: API → Redirecionar para public/
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^(.*)$ public/$1 [L]
+
+# QUARTO: Storage → Servir diretamente se arquivo existir
+RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# ÚLTIMO: Redirecionar tudo mais para public/
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+
+echo "✅ .htaccess na raiz atualizado"
+echo ""
+
+# 3. Corrigir .htaccess em public/ - ORDEM É CRÍTICA!
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # PRIMEIRO: Servir arquivos e diretórios existentes diretamente
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # SEGUNDO: Admin (zirigui) → Laravel (index.php) - DEVE SER ANTES DE TUDO!
+    # Esta regra DEVE vir ANTES da regra do React no final
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ index.php [L]
+
+    # TERCEIRO: API → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # QUARTO: Storage → Servir diretamente se arquivo existir
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # QUINTO: Redirect Trailing Slashes
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # ÚLTIMO: Tudo mais → React (index.html)
+    # Esta regra DEVE vir por último, depois de todas as outras
+    RewriteCond %{REQUEST_URI} ^/zirigui
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+echo "✅ .htaccess em public/ atualizado"
+echo ""
+
+# 4. Verificar se public/index.php existe
+if [ -f "public/index.php" ]; then
+    echo "✅ public/index.php existe"
+else
+    echo "❌ public/index.php NÃO existe!"
+fi
+echo ""
+
+# 5. Limpar cache
+echo "=== Limpando cache ==="
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+echo "✅ Cache limpo"
+echo ""
+
+# 6. Testar roteamento
+echo "=== Testando roteamento ==="
+echo "Teste no navegador:"
+echo "  - https://betgeniusbr.com/zirigui (deve carregar admin Filament)"
+echo "  - https://betgeniusbr.com/ (deve carregar React)"
+echo ""
+
+echo "═══════════════════════════════════════════════════════════════"
+echo "✅ CORREÇÃO CONCLUÍDA"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "💡 IMPORTANTE:"
+echo "   1. Aguarde 2-3 minutos para propagar"
+echo "   2. Limpe o cache do navegador (Ctrl+Shift+R ou Cmd+Shift+R)"
+echo "   3. Acesse: https://betgeniusbr.com/zirigui"
+echo "   4. Deve carregar o admin do Filament (tela de login ou dashboard)"
+echo "   5. Se ainda não funcionar, verifique o Document Root no hPanel"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

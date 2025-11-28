@@ -1,0 +1,67 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR ADMIN PANEL VAZIO
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: Admin carrega mas conteúdo não aparece
+CAUSA: Cache ou assets do Filament não carregando
+
+───────────────────────────────────────────────────────────────
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Limpar TODOS os caches
+echo "=== Limpando todos os caches ==="
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan optimize:clear
+php artisan filament:cache-components
+php artisan filament:clear-cached-components
+echo "✅ Cache limpo"
+echo ""
+
+# 2. Publicar assets do Filament (se necessário)
+echo "=== Publicando assets do Filament ==="
+php artisan filament:assets
+echo "✅ Assets publicados"
+echo ""
+
+# 3. Verificar permissões
+echo "=== Verificando permissões ==="
+chmod -R 755 storage bootstrap/cache
+chmod -R 644 storage/logs/*.log 2>/dev/null || true
+echo "✅ Permissões ajustadas"
+echo ""
+
+# 4. Verificar se há erros no log
+echo "=== Últimos erros no log ==="
+tail -30 storage/logs/laravel.log | grep -i "error\|exception" | tail -10 || echo "Nenhum erro recente"
+echo ""
+
+# 5. Verificar rotas do Filament
+echo "=== Verificando rotas do Filament ==="
+php artisan route:list | grep -i "zirigui\|filament" | head -10
+echo ""
+
+# 6. Verificar se o .env tem FILAMENT_BASE_URL correto
+echo "=== Verificando FILAMENT_BASE_URL ==="
+grep "FILAMENT_BASE_URL" .env || echo "FILAMENT_BASE_URL não encontrado no .env"
+echo ""
+
+echo "═══════════════════════════════════════════════════════════════"
+echo "✅ VERIFICAÇÃO CONCLUÍDA"
+echo "═══════════════════════════════════════════════════════════════"
+echo ""
+echo "💡 Agora:"
+echo "   1. Limpe o cache do navegador (Ctrl+Shift+R ou Cmd+Shift+R)"
+echo "   2. Recarregue a página do admin"
+echo "   3. Verifique o Console do navegador (F12) para erros"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

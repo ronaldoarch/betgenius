@@ -1,0 +1,50 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR ERRO 500 - COMANDO COMPLETO
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "1️⃣ Atualizando .htaccess..." && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # IMPORTANTE: Permitir acesso direto a arquivos estáticos PRIMEIRO
+  # Arquivos existentes - servir diretamente (SEM processar pelo Laravel)
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # Diretórios existentes - servir diretamente
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess atualizado" && echo "" && echo "2️⃣ Ajustando permissões..." && chmod 755 app/ && chmod 644 app/index.html && chmod 755 app/assets/ && chmod 644 app/assets/* 2>/dev/null && echo "✅ Permissões ajustadas" && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════

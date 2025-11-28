@@ -1,0 +1,71 @@
+.history-page {
+  width: 100%;
+}
+
+.history-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background: #002769;
+  color: #ffffff;
+  border: 1px solid #01b7fc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab-btn:hover,
+.tab-btn.active {
+  background: #01b7fc;
+  color: #ffffff;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.history-table th,
+.history-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #01b7fc;
+}
+
+.history-table th {
+  background: #002769;
+  color: #01b7fc;
+  font-weight: bold;
+}
+
+.history-table td {
+  color: #ffffff;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-pending {
+  background: #ffc107;
+  color: #000;
+}
+
+.status-approved {
+  background: #28a745;
+  color: #fff;
+}
+
+.status-rejected {
+  background: #dc3545;
+  color: #fff;
+}
+

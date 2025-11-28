@@ -1,0 +1,38 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR LOGS DO ERRO 500
+═══════════════════════════════════════════════════════════════
+
+Execute para ver o que está causando o erro 500:
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar logs do Apache/Nginx:
+
+tail -50 /var/log/apache2/error_log 2>/dev/null || tail -50 /var/log/httpd/error_log 2>/dev/null || tail -50 /usr/local/apache/logs/error_log 2>/dev/null || echo "⚠️  Logs não encontrados nos locais padrão"
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Verificar logs do Laravel:
+
+tail -50 storage/logs/laravel.log | grep -i "500\|error\|exception" | tail -20
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Testar acesso direto aos arquivos via curl:
+
+echo "Testando CSS:"
+curl -I https://betgeniusbr.com/app/assets/index-R46pBGYW.css 2>&1 | head -5
+
+echo ""
+echo "Testando JS:"
+curl -I https://betgeniusbr.com/app/assets/index-DrMwNlRZ.js 2>&1 | head -5
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Verificar se os arquivos existem e têm conteúdo:
+
+ls -lh public/app/assets/*.css public/app/assets/*.js 2>&1
+file public/app/assets/*.css public/app/assets/*.js 2>&1 | head -5
+
+═══════════════════════════════════════════════════════════════
+

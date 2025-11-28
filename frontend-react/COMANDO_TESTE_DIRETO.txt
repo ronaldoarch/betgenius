@@ -1,0 +1,19 @@
+═══════════════════════════════════════════════════════════════
+🔍 TESTE DIRETO - VERIFICAR ACESSO
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH para testar o acesso:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Testando acesso direto ao index.html..." && curl -I https://betgeniusbr.com/public/index.html 2>&1 | head -3 && echo "" && echo "2. Testando acesso à raiz..." && curl -I https://betgeniusbr.com/ 2>&1 | head -3 && echo "" && echo "3. Testando teste.txt..." && curl -I https://betgeniusbr.com/teste.txt 2>&1 | head -3
+
+═══════════════════════════════════════════════════════════════
+
+INTERPRETAÇÃO:
+- Se /public/index.html retornar 200: O arquivo é acessível, problema é .htaccess
+- Se /public/index.html retornar 403: Document Root pode estar errado
+- Se /teste.txt retornar 200 mas / retornar 403: Document Root está em public_html/public
+
+═══════════════════════════════════════════════════════════════
+

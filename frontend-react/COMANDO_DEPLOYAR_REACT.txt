@@ -1,0 +1,100 @@
+═══════════════════════════════════════════════════════════════
+🚀 DEPLOYAR REACT COMO SITE PRINCIPAL
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+# 1. Ir para o diretório
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 2. Fazer backup
+cp public/index.php public/index.php.backup.$(date +%Y%m%d_%H%M%S)
+cp public/index.php public/index_laravel.php
+
+# 3. Criar .htaccess para servir React e Laravel API
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Permitir acesso direto a arquivos estáticos PRIMEIRO
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Permitir acesso à API do Laravel
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ index.php [L]
+
+    # Permitir acesso ao admin (Filament)
+    RewriteCond %{REQUEST_URI} ^/admin
+    RewriteRule ^ index.php [L]
+
+    # Permitir acesso ao storage
+    RewriteCond %{REQUEST_URI} ^/storage
+    RewriteRule ^ index.php [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Se não for arquivo/diretório e não for API/admin/storage, servir index.html (React)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/api
+    RewriteCond %{REQUEST_URI} !^/admin
+    RewriteCond %{REQUEST_URI} !^/storage
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Configurar MIME types
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/javascript mjs
+    AddType text/javascript js
+    AddType text/css css
+    AddType image/svg+xml svg svgz
+    AddType application/json json
+    AddType application/wasm wasm
+    AddType font/woff2 woff2
+    AddType font/woff woff
+    AddType font/ttf ttf
+</IfModule>
+
+# Headers para forçar MIME type correto
+<FilesMatch "\.(js|mjs)$">
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/javascript; charset=utf-8"
+    </IfModule>
+</FilesMatch>
+EOF
+
+chmod 644 public/.htaccess
+
+# 4. Verificar estrutura
+echo "✅ Configuração concluída!"
+echo ""
+echo "Agora você precisa fazer upload dos arquivos do React:"
+echo "  - frontend-react/dist/index.html → public/index.html"
+echo "  - frontend-react/dist/assets/* → public/assets/*"
+
+═══════════════════════════════════════════════════════════════
+
+Depois de fazer upload:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+
+═══════════════════════════════════════════════════════════════
+

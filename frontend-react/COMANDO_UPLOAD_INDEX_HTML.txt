@@ -1,0 +1,35 @@
+═══════════════════════════════════════════════════════════════
+📤 COMANDO PARA CRIAR INDEX.HTML NO SERVIDOR
+═══════════════════════════════════════════════════════════════
+
+Execute este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cat > public/index.html << 'EOFHTML'
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BetGenius - Cassino Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/assets/index-DrMwNlRZ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-R46pBGYW.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+EOFHTML
+chmod 644 public/index.html && echo "✅ index.html criado!" && ls -lh public/index.html
+
+═══════════════════════════════════════════════════════════════
+
+Depois de executar:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Acesse: https://betgeniusbr.com/
+3. O site React deve carregar! 🎉
+
+═══════════════════════════════════════════════════════════════
+

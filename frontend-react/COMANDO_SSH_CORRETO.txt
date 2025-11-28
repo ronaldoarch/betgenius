@@ -1,0 +1,30 @@
+═══════════════════════════════════════════════════════════════
+🔧 COMANDO SSH CORRETO
+═══════════════════════════════════════════════════════════════
+
+✅ COMANDO CORRETO PARA CONECTAR:
+
+ssh -p 65002 u127271520@betgeniusbr.com
+
+═══════════════════════════════════════════════════════════════
+
+📋 DEPOIS DE CONECTAR, EXECUTE:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# Criar symlink do storage
+php artisan storage:link
+
+# Verificar se foi criado
+ls -la public/storage
+
+# Verificar logo
+find storage/app/public/uploads -name "*Nx72GR0pqlAV*"
+
+═══════════════════════════════════════════════════════════════
+
+📋 COMANDO COMPLETO (copie e cole tudo de uma vez):
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && php artisan storage:link && echo "✅ Symlink criado!" && ls -la public/storage | head -3 && echo "" && echo "Verificando logo:" && find storage/app/public/uploads -name "*Nx72GR0pqlAV*" 2>/dev/null | head -3
+
+═══════════════════════════════════════════════════════════════

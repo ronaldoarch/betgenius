@@ -1,0 +1,71 @@
+═══════════════════════════════════════════════════════════════
+🔧 SOLUÇÃO FORÇA TOTAL - CORRIGIR TUDO DE UMA VEZ
+═══════════════════════════════════════════════════════════════
+
+Execute este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && find . -maxdepth 1 -name "index.php" -type f -delete && rm -f index.php && chmod 755 . && chmod 755 public/ && chmod 644 .htaccess 2>/dev/null && chmod 644 public/.htaccess 2>/dev/null && chmod 644 public/index.php 2>/dev/null && chmod 644 public/index.html 2>/dev/null && find public/ -type f -exec chmod 644 {} \; 2>/dev/null && find public/ -type d -exec chmod 755 {} \; 2>/dev/null && cat > .htaccess << 'EOF'
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+chmod 644 .htaccess && cat > public/.htaccess << 'EOFPUBLIC'
+Options +FollowSymLinks +SymLinksIfOwnerMatch -Indexes
+DirectoryIndex index.html index.php
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_URI} ^/admin [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_URI} ^/storage [NC]
+RewriteRule ^ index.php [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]
+EOFPUBLIC
+chmod 644 public/.htaccess && if [ ! -f "public/index.html" ]; then cat > public/index.html << 'EOFHTML'
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BetGenius - Cassino Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/assets/index-DrMwNlRZ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-R46pBGYW.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+EOFHTML
+chmod 644 public/index.html; fi && echo "Teste OK" > public/teste.txt && chmod 644 public/teste.txt && echo "✅ Solução força total aplicada!"
+
+═══════════════════════════════════════════════════════════════
+
+DEPOIS DE EXECUTAR:
+
+1. Teste primeiro: https://betgeniusbr.com/teste.txt
+   - Se funcionar: O servidor está acessando public/ ✅
+   - Se der 403: O Document Root está errado ❌
+
+2. Se o teste.txt funcionar, teste: https://betgeniusbr.com/
+   - Deve carregar o site React agora
+
+3. Se o teste.txt NÃO funcionar:
+   - O problema é CERTAMENTE o Document Root no hPanel
+   - Veja: VERIFICAR_DOCUMENT_ROOT.md
+
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,30 @@
+===========================================
+INSTRUÇÕES PARA LIMPAR O SERVIDOR
+===========================================
+
+1. VIA FILEZILLA:
+   - Conecte: betgeniusbr.com
+   - Navegue até: /public_html/public/app/
+   - DELETE TUDO (exceto se quiser manter assets/index.html temporariamente)
+
+2. OU DELETE A PASTA COMPLETA:
+   - Delete a pasta "app" inteira
+   - Crie uma nova pasta "app" vazia
+
+3. FAÇA UPLOAD APENAS DE:
+   - index.html (de dist/)
+   - assets/ (pasta completa de dist/)
+
+4. NÃO ENVIE:
+   - node_modules/
+   - src/
+   - package.json
+   - vite.config.js
+   - Qualquer arquivo .md ou .sh
+   - frontend-react.tar.gz
+
+5. APÓS UPLOAD:
+   - Configure permissões: 755 (pastas), 644 (arquivos)
+   - Teste: https://betgeniusbr.com/app/
+
+===========================================

@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 TESTAR API APÓS REMOVER INDEX.PHP
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH para testar se a API está funcionando:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "Testando APIs..." && echo "" && echo "1. /api/games/all:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games/all | head -c 500 && echo "" && echo "" && echo "2. /api/settings/banners:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/banners | head -c 500 && echo "" && echo "" && echo "3. /api/categories:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/categories | head -c 500
+
+═══════════════════════════════════════════════════════════════
+
+Se retornar JSON (começando com { ou [), está funcionando!
+Se retornar HTML (começando com <!DOCTYPE), ainda há problema.
+
+═══════════════════════════════════════════════════════════════
+

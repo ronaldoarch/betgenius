@@ -1,0 +1,42 @@
+═══════════════════════════════════════════════════════════════
+🔄 COMANDO SIMPLES - COPIE E COLE TUDO DE UMA VEZ
+═══════════════════════════════════════════════════════════════
+
+Você já está no servidor SSH! Apenas cole este comando:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && rm -f index.html index_laravel.php && rm -rf assets && cat > index.php << 'EOF'
+<?php
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+define('LARAVEL_START', microtime(true));
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+require __DIR__.'/../vendor/autoload.php';
+$app = require_once __DIR__.'/../bootstrap/app.php';
+$kernel = $app->make(Kernel::class);
+$response = $kernel->handle($request = Request::capture())->send();
+$kernel->terminate($request, $response);
+EOF
+cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    RewriteEngine On
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+EOF
+chmod 644 index.php .htaccess && cd .. && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan optimize:clear && echo "✅ PRONTO! Teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

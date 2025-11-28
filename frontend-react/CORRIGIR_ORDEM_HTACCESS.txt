@@ -1,0 +1,98 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR ORDEM DAS REGRAS NO .HTACCESS
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: Há duas regras para /zirigui e a ordem está errada
+SOLUÇÃO: Garantir que a regra que roteia para Laravel venha PRIMEIRO
+
+───────────────────────────────────────────────────────────────
+
+Execute no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# Ver .htaccess completo em public/
+echo "=== .htaccess completo em public/ ==="
+cat public/.htaccess
+echo ""
+
+# Corrigir .htaccess em public/ - ORDEM CORRETA
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # PRIMEIRO: Servir arquivos e diretórios existentes diretamente
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # SEGUNDO: Admin (zirigui) → Laravel index.php
+    # Esta regra DEVE vir ANTES de qualquer outra que mencione /zirigui
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteRule ^ index.php [L]
+
+    # TERCEIRO: API → Laravel index.php
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # QUARTO: Storage → Servir diretamente
+    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # QUINTO: Redirect Trailing Slashes
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # ÚLTIMO: Tudo mais → React index.html
+    # IMPORTANTE: NÃO incluir regra para /zirigui aqui!
+    # Apenas verificar /api para não interferir
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+
+echo "✅ .htaccess corrigido com ordem correta"
+echo ""
+
+# Limpar cache
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+
+echo "✅ Cache limpo"
+echo ""
+
+# Testar
+echo "=== Testando ==="
+echo "Acesse: https://betgeniusbr.com/zirigui"
+echo "Deve carregar o admin do Filament"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

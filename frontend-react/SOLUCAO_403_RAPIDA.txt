@@ -1,0 +1,47 @@
+═══════════════════════════════════════════════════════════════
+🚨 ERRO 403 - SOLUÇÃO RÁPIDA
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA: 403 Forbidden após subir backup original
+
+═══════════════════════════════════════════════════════════════
+✅ SOLUÇÃO IMEDIATA
+═══════════════════════════════════════════════════════════════
+
+1️⃣ NO SERVIDOR (public_html/public/):
+
+   ❌ DELETAR ou RENOMEAR .htaccess antigo
+      → Renomear para .htaccess.backup
+
+2️⃣ UPLOAD DOS ARQUIVOS CORRETOS:
+
+   ✅ frontend-react/.htaccess-SIMPLES
+      → public_html/public/.htaccess
+      (RENOMEAR para .htaccess)
+
+   ✅ frontend-react/dist/index.html
+      → public_html/public/index.html
+
+   ✅ frontend-react/dist/assets/ (pasta completa)
+      → public_html/public/assets/
+
+   ✅ frontend-react/index_laravel.php
+      → public_html/public/index_laravel.php
+
+3️⃣ AJUSTAR PERMISSÕES:
+
+   index.html          → 644
+   index_laravel.php   → 644
+   .htaccess          → 644
+   assets/            → 755
+   assets/*           → 644
+
+4️⃣ TESTAR:
+
+   🌐 https://betgeniusbr.com/
+   🔐 https://betgeniusbr.com/admin
+
+   Limpar cache: Ctrl + Shift + R
+
+═══════════════════════════════════════════════════════════════
+

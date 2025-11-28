@@ -1,0 +1,95 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR E CORRIGIR - ERRO 500
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos na ordem:
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar se os arquivos existem:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "=== Arquivos em app/assets/ ===" && ls -la app/assets/ && echo "" && echo "=== Verificando nomes exatos ===" && ls -la app/assets/*.css app/assets/*.js 2>&1
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Verificar conteúdo dos arquivos:
+
+echo "=== Primeiras linhas do CSS ===" && head -3 app/assets/*.css 2>&1 && echo "" && echo "=== Primeiras linhas do JS ===" && head -3 app/assets/*.js 2>&1
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Verificar o que o index.html está referenciando:
+
+echo "=== Referências no index.html ===" && grep -E "assets|\.js|\.css" app/index.html | head -5
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Criar .htaccess ROBUSTO:
+
+cat > .htaccess << 'EOF'
+# NUNCA processar arquivos estáticos como PHP
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|json|xml|txt|html)$">
+  <IfModule mod_php.c>
+    php_flag engine off
+  </IfModule>
+  SetHandler default-handler
+  ForceType text/plain
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # NUNCA reescrever arquivos que existem fisicamente
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess criado"
+
+═══════════════════════════════════════════════════════════════
+
+5️⃣ Ajustar permissões:
+
+chmod 644 app/assets/*.css app/assets/*.js 2>/dev/null
+chmod 755 app/assets/
+chmod 644 app/index.html
+echo "✅ Permissões ajustadas"
+
+═══════════════════════════════════════════════════════════════
+
+6️⃣ Testar:
+
+echo "Teste no navegador:"
+echo "  https://betgeniusbr.com/app/assets/index-R46pBGYW.css"
+echo "  https://betgeniusbr.com/app/assets/index-DrMwNlRZ.js"
+
+═══════════════════════════════════════════════════════════════
+

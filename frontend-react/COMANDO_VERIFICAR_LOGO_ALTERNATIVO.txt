@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR LOGOS DISPONÍVEIS
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para verificar se há logos disponíveis:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Listando PNGs em uploads:" && find storage/app/public/uploads -name "*.png" -type f 2>/dev/null | head -5 && echo "" && echo "2. Criando diretório se não existir:" && mkdir -p public/storage/uploads && chmod 755 public/storage/uploads && echo "✅ Diretório criado/verificado" && echo "" && echo "3. Verificando logo path da API:" && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/settings/data | grep -o '"software_logo_white":"[^"]*' | cut -d'"' -f4
+
+═══════════════════════════════════════════════════════════════
+
+Se não houver logos disponíveis, você precisará fazer upload
+do logo via painel admin (Filament) em: https://betgeniusbr.com/admin
+
+═══════════════════════════════════════════════════════════════
+

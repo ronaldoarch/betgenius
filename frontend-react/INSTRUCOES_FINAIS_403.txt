@@ -1,0 +1,83 @@
+═══════════════════════════════════════════════════════════════
+🚨 INSTRUÇÕES FINAIS - ERRO 403
+═══════════════════════════════════════════════════════════════
+
+O erro 403 persiste. Siga estas instruções na ordem:
+
+═══════════════════════════════════════════════════════════════
+
+PASSO 1: EXECUTAR SCRIPT DE CORREÇÃO NO SSH
+═══════════════════════════════════════════════════════════════
+
+Execute este comando no SSH:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && rm -f index.php && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+EOF
+chmod 644 .htaccess && chmod 755 . && chmod 755 public/ && chmod 644 public/index.php && php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan optimize:clear && echo "✅ Correções aplicadas!"
+
+═══════════════════════════════════════════════════════════════
+
+PASSO 2: VERIFICAR DOCUMENT ROOT NO hPanel (CRÍTICO!)
+═══════════════════════════════════════════════════════════════
+
+1. Acesse: https://hpanel.hostinger.com/
+2. Faça login
+3. Vá em: Domínios → betgeniusbr.com
+4. Clique em: "Configurações" ou "Avançado"
+5. Procure por: "Document Root" ou "Raiz do Documento"
+6. VERIFIQUE o valor atual:
+   
+   ❌ ERRADO: public_html/public
+   ❌ ERRADO: domains/betgeniusbr.com/public_html/public
+   ✅ CORRETO: public_html
+   ✅ CORRETO: domains/betgeniusbr.com/public_html
+
+7. Se estiver ERRADO:
+   - Clique em "Editar" ou "Alterar"
+   - Altere para: public_html (SEM /public)
+   - Clique em "Salvar"
+   - AGUARDE 2-3 MINUTOS
+
+═══════════════════════════════════════════════════════════════
+
+PASSO 3: TESTAR
+═══════════════════════════════════════════════════════════════
+
+1. Limpe o cache do navegador:
+   - Windows/Linux: Ctrl + Shift + R
+   - Mac: Cmd + Shift + R
+
+2. Acesse: https://betgeniusbr.com/
+
+3. Se ainda não funcionar:
+   - Aguarde mais 2-3 minutos (propagação do Document Root)
+   - Tente novamente
+
+═══════════════════════════════════════════════════════════════
+
+SE AINDA NÃO FUNCIONAR:
+═══════════════════════════════════════════════════════════════
+
+O problema pode ser uma configuração específica do servidor.
+
+Contate o suporte do Hostinger e informe:
+- Domínio: betgeniusbr.com
+- Problema: Erro 403 Forbidden
+- Document Root desejado: public_html
+- Já tentou: Alterar Document Root, corrigir .htaccess, ajustar permissões
+
+═══════════════════════════════════════════════════════════════
+

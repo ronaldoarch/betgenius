@@ -1,0 +1,75 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .HTACCESS - SOLUÇÃO FINAL
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA:
+A API ainda está retornando HTML. Vamos simplificar e garantir
+que o Laravel processe as rotas /api/* PRIMEIRO.
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) && cp public/.htaccess public/.htaccess.backup.$(date +%Y%m%d_%H%M%S) && cat > .htaccess << 'EOFRAIZ'
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+EOFRAIZ
+chmod 644 .htaccess && cat > public/.htaccess << 'EOFPUBLIC'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_URI} ^/admin [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_URI} ^/storage [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/api
+    RewriteCond %{REQUEST_URI} !^/admin
+    RewriteCond %{REQUEST_URI} !^/storage
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOFPUBLIC
+chmod 644 public/.htaccess && echo "✅ Ambos .htaccess corrigidos!" && sleep 3 && echo "" && echo "Testando API..." && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games | head -c 500
+
+═══════════════════════════════════════════════════════════════
+
+O que foi corrigido:
+- .htaccess na raiz: Simplificado - apenas redireciona para public/
+- .htaccess em public/: Processa /api/* PRIMEIRO pelo Laravel
+- Verifica se não é arquivo/diretório antes de processar
+
+Depois de executar:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+3. Os dados devem carregar agora!
+
+═══════════════════════════════════════════════════════════════

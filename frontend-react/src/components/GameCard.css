@@ -1,0 +1,42 @@
+.game-card {
+  background: #021c47;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  border-color: #01b7fc;
+  box-shadow: 0 10px 30px rgba(1, 183, 252, 0.3);
+}
+
+.game-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: #002769;
+}
+
+.game-info {
+  padding: 15px;
+}
+
+.game-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game-provider {
+  font-size: 12px;
+  color: #01b7fc;
+  opacity: 0.8;
+}
+

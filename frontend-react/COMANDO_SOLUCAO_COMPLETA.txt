@@ -1,0 +1,107 @@
+═══════════════════════════════════════════════════════════════
+🚀 SOLUÇÃO COMPLETA FINAL - TUDO DE UMA VEZ
+═══════════════════════════════════════════════════════════════
+
+Execute este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && rm -f index.php && if [ ! -f "public/index.php" ]; then if [ -f "public/index.php.laravel" ]; then mv public/index.php.laravel public/index.php; else cat > public/index.php << 'EOFINDEX'
+<?php
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
+define('LARAVEL_START', microtime(true));
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) { require $maintenance; }
+require __DIR__.'/../vendor/autoload.php';
+$app = require_once __DIR__.'/../bootstrap/app.php';
+$kernel = $app->make(Kernel::class);
+$response = $kernel->handle($request = Request::capture())->send();
+$kernel->terminate($request, $response);
+EOFINDEX
+chmod 644 public/index.php; fi; fi && cat > .htaccess << 'EOFRAIZ'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/javascript mjs
+    AddType text/javascript js
+    AddType text/css css
+</IfModule>
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+EOFRAIZ
+chmod 644 .htaccess && cat > public/.htaccess << 'EOFPUBLIC'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    RewriteEngine On
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_URI} ^/api
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_URI} ^/admin
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_URI} ^/storage
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/api
+    RewriteCond %{REQUEST_URI} !^/admin
+    RewriteCond %{REQUEST_URI} !^/storage
+    RewriteRule ^ index.html [L]
+</IfModule>
+DirectoryIndex index.html index.php
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType application/javascript mjs
+    AddType text/javascript js
+    AddType text/css css
+    AddType image/svg+xml svg svgz
+    AddType application/json json
+    AddType application/wasm wasm
+    AddType font/woff2 woff2
+    AddType font/woff woff
+    AddType font/ttf ttf
+</IfModule>
+<FilesMatch "\.(js|mjs)$">
+    <IfModule mod_headers.c>
+        Header set Content-Type "application/javascript; charset=utf-8"
+    </IfModule>
+</FilesMatch>
+EOFPUBLIC
+chmod 644 public/.htaccess && chmod 755 . && chmod 755 public/ && chmod 644 public/index.php 2>/dev/null && php artisan config:clear 2>/dev/null && php artisan cache:clear 2>/dev/null && php artisan route:clear 2>/dev/null && php artisan view:clear 2>/dev/null && php artisan optimize:clear 2>/dev/null && echo "✅ Solução completa aplicada!"
+
+═══════════════════════════════════════════════════════════════
+
+IMPORTANTE:
+- Se index.html não existir, você precisa fazer upload:
+  frontend-react/dist/index.html → public/index.html
+  frontend-react/dist/assets/* → public/assets/*
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+
+Se ainda houver 403, verifique o Document Root no hPanel (deve ser: public_html)
+
+═══════════════════════════════════════════════════════════════
+

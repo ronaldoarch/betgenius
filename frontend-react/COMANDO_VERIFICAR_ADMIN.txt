@@ -1,0 +1,19 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR URL DO ADMIN
+═══════════════════════════════════════════════════════════════
+
+O admin deveria estar em: https://betgeniusbr.com/admin
+
+Execute este comando para verificar:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Verificando FILAMENT_BASE_URL:" && grep "FILAMENT_BASE_URL" .env 2>/dev/null || echo "Variável não encontrada" && echo "" && echo "2. Testando /admin:" && HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://betgeniusbr.com/admin) && echo "HTTP Code: $HTTP_CODE" && if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ]; then echo "✅ /admin está acessível"; else echo "❌ /admin NÃO está acessível"; fi && echo "" && echo "3. Verificando rotas:" && php artisan route:list | grep -i "admin\|filament" | head -5
+
+═══════════════════════════════════════════════════════════════
+
+O admin do Filament deveria estar em: https://betgeniusbr.com/admin
+Se não estiver funcionando, pode ser problema de roteamento.
+
+═══════════════════════════════════════════════════════════════
+

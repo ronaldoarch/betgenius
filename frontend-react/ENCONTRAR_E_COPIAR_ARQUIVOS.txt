@@ -1,0 +1,31 @@
+═══════════════════════════════════════════════════════════════
+🔍 ENCONTRAR E COPIAR ARQUIVOS DO REACT
+═══════════════════════════════════════════════════════════════
+
+O index.html está buscando arquivos que não existem em app/assets/
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Procurar os arquivos em todo o servidor:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && find . -name "index-DrMwNlRZ.js" -o -name "index-R46pBGYW.css" 2>&1
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Se não encontrar, precisamos fazer build do React localmente e fazer upload
+
+# No seu computador:
+cd frontend-react
+npm run build
+
+# Depois fazer upload de dist/assets/ para public_html/public/app/assets/
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Ou verificar se há um build antigo em outro lugar:
+
+find . -type f -name "*.js" -path "*/assets/*" | grep -E "index-.*\.js$" | head -5
+find . -type f -name "*.css" -path "*/assets/*" | grep -E "index-.*\.css$" | head -5
+
+═══════════════════════════════════════════════════════════════
+

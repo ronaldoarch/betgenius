@@ -1,0 +1,7 @@
+===========================================
+COMANDO PARA EXECUTAR DIRETAMENTE NO SSH
+===========================================
+
+Execute este comando no seu terminal SSH:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && cat > frontend-completo-home.html << 'FILE_EOF'

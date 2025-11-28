@@ -1,0 +1,42 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR index.php NA RAIZ (NÃO INTERFERIR NAS APIs)
+═══════════════════════════════════════════════════════════════
+
+O index.php na raiz pode estar interferindo nas rotas /api/*
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cat > index.php << 'EOF'
+<?php
+/**
+ * Redireciona para public/index.php
+ * MAS permite que rotas /api/* sejam processadas pelo Laravel
+ */
+
+// Se a requisição é para /api/*, redireciona para public/
+if (strpos($_SERVER['REQUEST_URI'], '/api/') === 0) {
+    $_SERVER['REQUEST_URI'] = '/api' . substr($_SERVER['REQUEST_URI'], 4);
+    require __DIR__ . '/public/index.php';
+    exit;
+}
+
+// Para outras requisições, verifica se public/index.php existe
+if (file_exists(__DIR__ . '/public/index.php')) {
+    require __DIR__ . '/public/index.php';
+} else {
+    http_response_code(500);
+    die('Erro: public/index.php não encontrado!');
+}
+EOF
+chmod 644 index.php && echo "✅ index.php atualizado"
+
+═══════════════════════════════════════════════════════════════
+
+OU, melhor ainda, REMOVA o index.php da raiz e use apenas o .htaccess:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && rm -f index.php && echo "✅ index.php removido - usando apenas .htaccess"
+
+═══════════════════════════════════════════════════════════════
+

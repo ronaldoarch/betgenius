@@ -1,0 +1,36 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR INDEX.PHP RESTAURADO
+═══════════════════════════════════════════════════════════════
+
+Execute no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# 1. Ver conteúdo do index.php restaurado
+echo "=== Conteúdo do index.php na raiz ==="
+cat index.php
+echo ""
+echo ""
+
+# 2. O problema pode ser que o index.php está servindo React
+# Vamos verificar se ele está redirecionando corretamente
+echo "=== Testando o que o index.php faz ==="
+php -r "
+\$_SERVER['REQUEST_URI'] = '/zirigui';
+\$_SERVER['REQUEST_METHOD'] = 'GET';
+include 'index.php';
+"
+echo ""
+echo ""
+
+# 3. Se o index.php estiver servindo React, vamos removê-lo
+# O .htaccess já deve estar fazendo o redirecionamento
+echo "=== Verificando se devemos remover index.php ==="
+echo "Se o index.php estiver servindo React, vamos removê-lo"
+echo "O .htaccess já deve fazer o redirecionamento"
+echo ""
+
+═══════════════════════════════════════════════════════════════
+

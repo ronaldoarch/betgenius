@@ -1,0 +1,17 @@
+═══════════════════════════════════════════════════════════════
+🔍 BUSCAR LOGO ESPECÍFICO E COPIAR SE EXISTIR
+═══════════════════════════════════════════════════════════════
+
+Execute este comando para buscar e copiar o logo:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && echo "1. Buscando logo específico:" && find . -name "Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" 2>/dev/null && echo "" && echo "2. Copiando se existir:" && if [ -f "storage/app/public/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" ]; then mkdir -p public/storage/uploads && cp "storage/app/public/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" "public/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" && chmod 644 "public/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" && echo "✅ Logo copiado!"; else echo "❌ Logo não encontrado - Precisa fazer upload via admin"; fi && echo "" && echo "3. Testando URL:" && sleep 2 && if [ -f "public/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png" ]; then curl -s -I https://betgeniusbr.com/storage/uploads/Nx72GR0pqlAV4i7TGLzp7ltgEP55R8raNB0pBI1q.png | head -3; else echo "Logo não existe para testar"; fi
+
+═══════════════════════════════════════════════════════════════
+
+Se o logo não for encontrado, você precisará fazer upload via
+painel admin em: https://betgeniusbr.com/admin
+
+═══════════════════════════════════════════════════════════════
+

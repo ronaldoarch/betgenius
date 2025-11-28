@@ -1,0 +1,38 @@
+═══════════════════════════════════════════════════════════════
+🔧 COMANDO PARA CORRIGIR PERMISSÕES
+═══════════════════════════════════════════════════════════════
+
+Execute este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && chmod 755 . && chmod 755 public/ && chmod 644 .htaccess 2>/dev/null && chmod 644 public/.htaccess 2>/dev/null && chmod 644 public/index.php 2>/dev/null && chmod 644 public/index.html 2>/dev/null && rm -f index.php && cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+EOF
+chmod 644 .htaccess && echo "✅ Permissões corrigidas!"
+
+═══════════════════════════════════════════════════════════════
+
+Depois:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+
+Se ainda houver erro 403, verifique o Document Root no hPanel
+(deve ser: public_html, NÃO public_html/public)
+
+═══════════════════════════════════════════════════════════════
+

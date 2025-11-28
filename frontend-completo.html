@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetGenius - Cassino Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Condensed', Arial, sans-serif;
+            background: #030c16;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: #000f21;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #01b7fc;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .balance {
+            background: #002769;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #01b7fc;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: #ffffff;
+            opacity: 0.8;
+        }
+
+        .balance-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #01b7fc;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #01b7fc;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #0199d4;
+        }
+
+        .btn-secondary {
+            background: #002769;
+            color: #ffffff;
+            border: 1px solid #01b7fc;
+        }
+
+        .btn-secondary:hover {
+            background: #003993;
+        }
+
+        .btn-danger {
+            background: #b22e2e;
+            color: #ffffff;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: #021c47;
+            color: #ffffff;
+            border: 1px solid #01b7fc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: #01b7fc;
+            color: #ffffff;
+        }
+
+        /* Content */
+        .content {
+            background: #021c47;
+            padding: 30px;
+            border-radius: 10px;
+            min-height: 500px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid #01b7fc;
+            border-radius: 5px;
+            color: #030c16;
+            font-size: 16px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #03c6fc;
+            box-shadow: 0 0 0 3px rgba(1, 183, 252, 0.1);
+        }
+
+        /* Quick Amount Buttons */
+        .quick-amounts {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .quick-amount-btn {
+            padding: 10px 20px;
+            background: #002769;
+            color: #ffffff;
+            border: 1px solid #01b7fc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-amount-btn:hover {
+            background: #01b7fc;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        /* QR Code */
+        .qrcode-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #002769;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .qrcode-text {
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            background: #ffffff;
+            color: #030c16;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #01b7fc;
+        }
+
+        .table th {
+            background: #002769;
+            color: #01b7fc;
+            font-weight: bold;
+        }
+
+        .table td {
+            color: #ffffff;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .status-approved {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .status-rejected {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #002769;
+            border-top: 3px solid #01b7fc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Login Page */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #021c47;
+            padding: 40px;
+            border-radius: 10px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #01b7fc;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <h1>🔐 Login</h1>
+        <div id="loginAlert" class="alert"></div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="loginEmail" placeholder="seu@email.com" />
+        </div>
+        <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" id="loginPassword" placeholder="Sua senha" />
+        </div>
+        <button class="btn btn-primary" onclick="login()" style="width: 100%;">Entrar</button>
+        <p style="text-align: center; margin-top: 20px; color: #ffffff; opacity: 0.8;">
+            Não tem conta? <a href="#" onclick="showRegister()" style="color: #01b7fc;">Cadastre-se</a>
+        </p>
+    </div>
+
+    <!-- Register Page -->
+    <div id="registerPage" class="login-container hidden">
+        <h1>📝 Cadastro</h1>
+        <div id="registerAlert" class="alert"></div>
+        <div class="form-group">
+            <label>Nome:</label>
+            <input type="text" id="registerName" placeholder="Seu nome" />
+        </div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="registerEmail" placeholder="seu@email.com" />
+        </div>
+        <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" id="registerPassword" placeholder="Mínimo 8 caracteres" />
+        </div>
+        <div class="form-group">
+            <label>Confirmar Senha:</label>
+            <input type="password" id="registerPasswordConfirm" placeholder="Confirme sua senha" />
+        </div>
+        <button class="btn btn-primary" onclick="register()" style="width: 100%;">Cadastrar</button>
+        <p style="text-align: center; margin-top: 20px; color: #ffffff; opacity: 0.8;">
+            Já tem conta? <a href="#" onclick="showLogin()" style="color: #01b7fc;">Faça login</a>
+        </p>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">🎰 BetGenius</div>
+                <div class="user-info">
+                    <div class="balance">
+                        <div class="balance-label">Saldo</div>
+                        <div class="balance-value" id="userBalance">R$ 0,00</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="loadWallet()">🔄 Atualizar</button>
+                    <button class="btn btn-danger" onclick="logout()">Sair</button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav">
+                <button class="nav-btn active" onclick="showPage('deposit')">💰 Depósito</button>
+                <button class="nav-btn" onclick="showPage('withdraw')">💸 Saque</button>
+                <button class="nav-btn" onclick="showPage('history')">📋 Histórico</button>
+                <button class="nav-btn" onclick="showPage('profile')">👤 Perfil</button>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Alerts -->
+                <div id="alert" class="alert"></div>
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px;">Carregando...</p>
+                </div>
+
+                <!-- Deposit Page -->
+                <div id="depositPage" class="page active">
+                    <h2 style="margin-bottom: 20px; color: #01b7fc;">💰 Fazer Depósito</h2>
+                    
+                    <div class="form-group">
+                        <label>Valor (R$):</label>
+                        <input type="number" id="depositAmount" placeholder="30.00" step="0.01" min="1" value="30" />
+                    </div>
+
+                    <div class="quick-amounts">
+                        <button class="quick-amount-btn" onclick="setAmount(30)">R$ 30</button>
+                        <button class="quick-amount-btn" onclick="setAmount(50)">R$ 50</button>
+                        <button class="quick-amount-btn" onclick="setAmount(100)">R$ 100</button>
+                        <button class="quick-amount-btn" onclick="setAmount(200)">R$ 200</button>
+                        <button class="quick-amount-btn" onclick="setAmount(500)">R$ 500</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CPF:</label>
+                        <input type="text" id="depositCpf" placeholder="000.000.000-00" value="702.062.922-95" />
+                    </div>
+
+                    <button class="btn btn-primary" onclick="submitDeposit()" style="width: 100%; padding: 15px; font-size: 16px;">
+                        💳 Gerar QR Code PIX
+                    </button>
+
+                    <div id="depositResult" class="qrcode-container hidden">
+                        <h3 style="color: #01b7fc; margin-bottom: 15px;">✅ Depósito Criado!</h3>
+                        <p style="margin-bottom: 10px;">ID da Transação: <strong id="depositId"></strong></p>
+                        <p style="margin-bottom: 15px;">Escaneie o QR Code ou copie o código PIX:</p>
+                        <div class="qrcode-text" id="depositQrcode"></div>
+                        <button class="btn btn-secondary" onclick="copyQrcode()" style="margin-top: 15px;">📋 Copiar Código PIX</button>
+                    </div>
+                </div>
+
+                <!-- Withdraw Page -->
+                <div id="withdrawPage" class="page">
+                    <h2 style="margin-bottom: 20px; color: #01b7fc;">💸 Solicitar Saque</h2>
+                    
+                    <div class="form-group">
+                        <label>Valor (R$):</label>
+                        <input type="number" id="withdrawAmount" placeholder="50.00" step="0.01" min="1" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Chave PIX:</label>
+                        <input type="text" id="withdrawPixKey" placeholder="CPF, Email, Telefone ou Chave Aleatória" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo de Chave:</label>
+                        <select id="withdrawPixType">
+                            <option value="cpf">CPF</option>
+                            <option value="email">Email</option>
+                            <option value="phoneNumber">Telefone</option>
+                            <option value="randomKey">Chave Aleatória</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="submitWithdraw()" style="width: 100%; padding: 15px; font-size: 16px;">
+                        💸 Solicitar Saque
+                    </button>
+                </div>
+
+                <!-- History Page -->
+                <div id="historyPage" class="page">
+                    <h2 style="margin-bottom: 20px; color: #01b7fc;">📋 Histórico de Transações</h2>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn btn-secondary" onclick="loadDeposits()">💰 Depósitos</button>
+                        <button class="btn btn-secondary" onclick="loadWithdrawals()">💸 Saques</button>
+                    </div>
+
+                    <div id="historyContent">
+                        <p style="text-align: center; color: #ffffff; opacity: 0.8;">Selecione uma opção acima</p>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="profilePage" class="page">
+                    <h2 style="margin-bottom: 20px; color: #01b7fc;">👤 Meu Perfil</h2>
+                    <div id="profileContent">
+                        <p style="text-align: center; color: #ffffff; opacity: 0.8;">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://betgeniusbr.com/api';
+        let currentToken = null;
+        let currentUser = null;
+
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', function() {
+            // Verificar se há token salvo
+            const savedToken = localStorage.getItem('token');
+            if (savedToken) {
+                currentToken = savedToken;
+                verifyToken();
+            } else {
+                showLogin();
+            }
+        });
+
+        // Função para fazer requisições autenticadas
+        async function apiRequest(url, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                ...options.headers
+            };
+
+            if (currentToken) {
+                headers['Authorization'] = `Bearer ${currentToken}`;
+            }
+
+            const response = await fetch(`${API_BASE}${url}`, {
+                ...options,
+                headers
+            });
+
+            if (response.status === 401) {
+                // Token inválido ou expirado
+                localStorage.removeItem('token');
+                currentToken = null;
+                showLogin();
+                showAlert('Sua sessão expirou. Faça login novamente.', 'error');
+                return null;
+            }
+
+            return response;
+        }
+
+        // Login
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const alert = document.getElementById('loginAlert');
+
+            if (!email || !password) {
+                showAlertElement(alert, 'Preencha todos os campos', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.access_token) {
+                    currentToken = data.access_token;
+                    localStorage.setItem('token', currentToken);
+                    showAlertElement(alert, 'Login realizado com sucesso!', 'success');
+                    setTimeout(() => {
+                        showMainApp();
+                        loadWallet();
+                        loadProfile();
+                    }, 1000);
+                } else {
+                    showAlertElement(alert, data.error || 'Erro ao fazer login', 'error');
+                }
+            } catch (error) {
+                showAlertElement(alert, 'Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        // Register
+        async function register() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+            const alert = document.getElementById('registerAlert');
+
+            if (!name || !email || !password || !passwordConfirm) {
+                showAlertElement(alert, 'Preencha todos os campos', 'error');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                showAlertElement(alert, 'As senhas não coincidem', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showAlertElement(alert, 'A senha deve ter no mínimo 8 caracteres', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password, password_confirmation: passwordConfirm })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.access_token) {
+                    currentToken = data.access_token;
+                    localStorage.setItem('token', currentToken);
+                    showAlertElement(alert, 'Cadastro realizado com sucesso!', 'success');
+                    setTimeout(() => {
+                        showMainApp();
+                        loadWallet();
+                        loadProfile();
+                    }, 1000);
+                } else {
+                    showAlertElement(alert, data.error || 'Erro ao cadastrar', 'error');
+                }
+            } catch (error) {
+                showAlertElement(alert, 'Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        // Verificar token
+        async function verifyToken() {
+            const response = await apiRequest('/auth/me');
+            if (response && response.ok) {
+                currentUser = await response.json();
+                showMainApp();
+                loadWallet();
+                loadProfile();
+            } else {
+                showLogin();
+            }
+        }
+
+        // Logout
+        async function logout() {
+            await apiRequest('/auth/logout', { method: 'POST' });
+            localStorage.removeItem('token');
+            currentToken = null;
+            currentUser = null;
+            showLogin();
+        }
+
+        // Carregar carteira
+        async function loadWallet() {
+            const response = await apiRequest('/profile/wallet');
+            if (response && response.ok) {
+                const data = await response.json();
+                if (data.wallets && data.wallets.length > 0) {
+                    const wallet = data.wallets.find(w => w.active) || data.wallets[0];
+                    document.getElementById('userBalance').textContent = 
+                        `R$ ${parseFloat(wallet.balance || 0).toFixed(2).replace('.', ',')}`;
+                }
+            }
+        }
+
+        // Carregar perfil
+        async function loadProfile() {
+            const response = await apiRequest('/auth/me');
+            if (response && response.ok) {
+                currentUser = await response.json();
+                const profileContent = document.getElementById('profileContent');
+                profileContent.innerHTML = `
+                    <div class="form-group">
+                        <label>Nome:</label>
+                        <input type="text" value="${currentUser.name || ''}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" value="${currentUser.email || ''}" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label>ID:</label>
+                        <input type="text" value="${currentUser.id || ''}" readonly />
+                    </div>
+                `;
+            }
+        }
+
+        // Depósito
+        function setAmount(amount) {
+            document.getElementById('depositAmount').value = amount;
+        }
+
+        async function submitDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            const cpf = document.getElementById('depositCpf').value.replace(/[^0-9]/g, '');
+
+            if (!amount || amount <= 0) {
+                showAlert('Informe um valor válido', 'error');
+                return;
+            }
+
+            if (!cpf || cpf.length !== 11) {
+                showAlert('Informe um CPF válido', 'error');
+                return;
+            }
+
+            showLoading(true);
+            hideAlert();
+
+            try {
+                const response = await apiRequest('/carteira_wallet/deposit/payment', {
+                    method: 'POST',
+                    body: JSON.stringify({ amount, cpf })
+                });
+
+                if (response && response.ok) {
+                    const data = await response.json();
+                    if (data.status && data.qrcode) {
+                        document.getElementById('depositId').textContent = data.idTransaction;
+                        document.getElementById('depositQrcode').textContent = data.qrcode;
+                        document.getElementById('depositResult').classList.remove('hidden');
+                        showAlert('Depósito criado com sucesso!', 'success');
+                        loadWallet();
+                    } else {
+                        showAlert(data.error || 'Erro ao criar depósito', 'error');
+                    }
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error || 'Erro ao criar depósito', 'error');
+                }
+            } catch (error) {
+                showAlert('Erro ao conectar com o servidor', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function copyQrcode() {
+            const qrcode = document.getElementById('depositQrcode').textContent;
+            navigator.clipboard.writeText(qrcode).then(() => {
+                showAlert('Código PIX copiado!', 'success');
+            });
+        }
+
+        // Saque
+        async function submitWithdraw() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const pixKey = document.getElementById('withdrawPixKey').value;
+            const pixType = document.getElementById('withdrawPixType').value;
+
+            if (!amount || amount <= 0) {
+                showAlert('Informe um valor válido', 'error');
+                return;
+            }
+
+            if (!pixKey) {
+                showAlert('Informe a chave PIX', 'error');
+                return;
+            }
+
+            showLoading(true);
+            hideAlert();
+
+            try {
+                const response = await apiRequest('/carteira_wallet/withdraw/request', {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        amount, 
+                        pix_key: pixKey,
+                        pix_key_type: pixType
+                    })
+                });
+
+                if (response && response.ok) {
+                    const data = await response.json();
+                    showAlert('Saque solicitado com sucesso!', 'success');
+                    document.getElementById('withdrawAmount').value = '';
+                    document.getElementById('withdrawPixKey').value = '';
+                    loadWallet();
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error || 'Erro ao solicitar saque', 'error');
+                }
+            } catch (error) {
+                showAlert('Erro ao conectar com o servidor', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Histórico
+        async function loadDeposits() {
+            showLoading(true);
+            try {
+                const response = await apiRequest('/carteira_wallet/deposit');
+                if (response && response.ok) {
+                    const data = await response.json();
+                    displayHistory(data.deposits || [], 'deposit');
+                }
+            } catch (error) {
+                showAlert('Erro ao carregar depósitos', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function loadWithdrawals() {
+            showLoading(true);
+            try {
+                const response = await apiRequest('/carteira_wallet/withdraw');
+                if (response && response.ok) {
+                    const data = await response.json();
+                    displayHistory(data.withdrawals || [], 'withdraw');
+                }
+            } catch (error) {
+                showAlert('Erro ao carregar saques', 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayHistory(items, type) {
+            const content = document.getElementById('historyContent');
+            if (!items || items.length === 0) {
+                content.innerHTML = '<p style="text-align: center; color: #ffffff; opacity: 0.8;">Nenhuma transação encontrada</p>';
+                return;
+            }
+
+            const table = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Valor</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${items.map(item => `
+                            <tr>
+                                <td>#${item.id}</td>
+                                <td>R$ ${parseFloat(item.amount || 0).toFixed(2).replace('.', ',')}</td>
+                                <td>${type === 'deposit' ? '💰 Depósito' : '💸 Saque'}</td>
+                                <td>
+                                    <span class="status-badge status-${getStatusClass(item.status)}">
+                                        ${getStatusText(item.status)}
+                                    </span>
+                                </td>
+                                <td>${formatDate(item.created_at)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            content.innerHTML = table;
+        }
+
+        function getStatusClass(status) {
+            if (status === 1 || status === 'approved') return 'approved';
+            if (status === 2 || status === 'rejected') return 'rejected';
+            return 'pending';
+        }
+
+        function getStatusText(status) {
+            if (status === 1 || status === 'approved') return 'Aprovado';
+            if (status === 2 || status === 'rejected') return 'Rejeitado';
+            return 'Pendente';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('pt-BR');
+        }
+
+        // Navegação
+        function showPage(pageName) {
+            // Esconder todas as páginas
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar página selecionada
+            document.getElementById(`${pageName}Page`).classList.add('active');
+            event.target.classList.add('active');
+
+            // Carregar dados se necessário
+            if (pageName === 'profile') {
+                loadProfile();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showRegister() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('registerPage').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('registerPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+        }
+
+        // Utilitários
+        function showAlert(message, type = 'info') {
+            const alert = document.getElementById('alert');
+            showAlertElement(alert, message, type);
+        }
+
+        function showAlertElement(element, message, type) {
+            element.textContent = message;
+            element.className = `alert alert-${type} show`;
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 5000);
+        }
+
+        function hideAlert() {
+            document.getElementById('alert').classList.remove('show');
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            if (show) {
+                loading.classList.add('show');
+            } else {
+                loading.classList.remove('show');
+            }
+        }
+
+        // Permitir Enter nos campos de login
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('loginPage').classList.contains('hidden') === false) {
+                    login();
+                } else if (document.getElementById('registerPage').classList.contains('hidden') === false) {
+                    register();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

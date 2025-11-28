@@ -1,0 +1,28 @@
+═══════════════════════════════════════════════════════════════
+🔧 SOLUÇÃO FINAL - REMOVER INDEX.PHP DA RAIZ
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA:
+O index.php na raiz está interferindo. Vamos removê-lo e deixar
+apenas o .htaccess processar as requisições.
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp index.php index.php.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && rm -f index.php && echo "✅ index.php removido da raiz!" && sleep 3 && echo "" && echo "Testando API..." && curl -s -H "Accept: application/json" https://betgeniusbr.com/api/games/all | head -c 500
+
+═══════════════════════════════════════════════════════════════
+
+O que foi feito:
+- index.php removido da raiz
+- Agora apenas o .htaccess processa as requisições
+- /api/* vai para public/ e o .htaccess em public/ processa pelo Laravel
+
+Depois de executar:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+3. Os dados devem carregar agora!
+
+═══════════════════════════════════════════════════════════════
+

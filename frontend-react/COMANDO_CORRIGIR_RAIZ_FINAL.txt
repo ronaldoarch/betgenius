@@ -1,0 +1,48 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .htaccess NA RAIZ - Remover Regra de Storage
+═══════════════════════════════════════════════════════════════
+
+O problema é que o .htaccess na raiz tem uma regra específica para
+/storage que está fazendo passar pelo PHP. Vamos remover essa regra:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null && cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# API → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Admin → Executar index.php na raiz
+RewriteCond %{REQUEST_URI} ^/admin [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Redirecionar tudo mais para public/ (storage será servido diretamente se existir)
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess na raiz corrigido!" && sleep 3 && echo "" && echo "Testando:" && curl -s -I https://betgeniusbr.com/storage/Games/Pragmatic_Oficial/vs10amm.webp | head -5
+
+═══════════════════════════════════════════════════════════════
+
+A mudança importante é que REMOVEMOS a regra específica para /storage.
+Agora, como a verificação de arquivos existentes vem PRIMEIRO, arquivos
+de storage serão servidos diretamente antes de qualquer redirecionamento.
+
+═══════════════════════════════════════════════════════════════
+

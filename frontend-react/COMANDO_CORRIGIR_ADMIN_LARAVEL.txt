@@ -1,0 +1,91 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR ADMIN PARA SER SERVIDO PELO LARAVEL
+═══════════════════════════════════════════════════════════════
+
+Execute no SSH:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) && cat > .htaccess << 'EOF'
+DirectoryIndex index.php index.html
+
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+
+# Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# API → Executar index.php na raiz (Laravel)
+RewriteCond %{REQUEST_URI} ^/api [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Admin (zirigui) → Executar index.php na raiz (Laravel/Filament)
+RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Redirecionar tudo mais para public/ (storage será servido diretamente se existir)
+RewriteRule ^(.*)$ public/$1 [L]
+EOF
+cat > public/.htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+    RewriteBase /
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Arquivos e diretórios existentes → Servir diretamente (PRIMEIRO!)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # API → Laravel (index.php)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+
+    # Admin (zirigui) → Laravel (index.php) - ANTES DO REACT!
+    RewriteCond %{REQUEST_URI} ^/zirigui [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Tudo mais → React (index.html)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/api
+    RewriteCond %{REQUEST_URI} !^/zirigui
+    RewriteRule ^ index.html [L]
+</IfModule>
+EOF
+chmod 644 .htaccess public/.htaccess && php artisan config:clear && php artisan route:clear && php artisan cache:clear && echo "✅ Admin configurado para ser servido pelo Laravel!"
+
+═══════════════════════════════════════════════════════════════
+
+💡 O que isso faz:
+   - Garante que /zirigui seja roteado para o Laravel (index.php)
+   - Mantém o site React na raiz (/)
+   - Mantém as APIs funcionando (/api)
+
+═══════════════════════════════════════════════════════════════
+

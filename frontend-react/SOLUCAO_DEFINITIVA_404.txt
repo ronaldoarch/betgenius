@@ -1,0 +1,99 @@
+═══════════════════════════════════════════════════════════════
+✅ SOLUÇÃO DEFINITIVA - ERRO 404
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos na ordem:
+
+═══════════════════════════════════════════════════════════════
+
+1️⃣ Verificar estrutura atual:
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "=== Estrutura ===" && ls -la | grep -E "app|assets" && echo "" && echo "=== Dentro de app/ ===" && ls -la app/ | head -10
+
+═══════════════════════════════════════════════════════════════
+
+2️⃣ Verificar o que index.html está referenciando:
+
+head -15 app/index.html | grep -E "assets|\.js|\.css"
+
+═══════════════════════════════════════════════════════════════
+
+3️⃣ Criar symlink (se não existir):
+
+if [ ! -L "assets" ]; then
+    ln -s app/assets assets
+    echo "✅ Symlink criado"
+else
+    echo "⚠️  Symlink já existe"
+    ls -la assets
+fi
+
+═══════════════════════════════════════════════════════════════
+
+4️⃣ Se symlink não funcionar, corrigir index.html:
+
+cd app && cp index.html index.html.backup && sed -i 's|href="/assets/|href="/app/assets/|g' index.html && sed -i 's|src="/assets/|src="/app/assets/|g' index.html && echo "✅ index.html corrigido" && head -15 index.html | grep -E "assets|\.js|\.css"
+
+═══════════════════════════════════════════════════════════════
+
+5️⃣ Verificar .htaccess:
+
+cd .. && echo "=== .htaccess atual ===" && cat .htaccess | head -20
+
+═══════════════════════════════════════════════════════════════
+
+6️⃣ Atualizar .htaccess (versão melhorada):
+
+cat > .htaccess << 'EOF'
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Permitir acesso direto a arquivos e diretórios existentes
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Redirecionar /assets/ para /app/assets/ (IMPORTANTE: antes de outras regras)
+  RewriteCond %{REQUEST_URI} ^/assets/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^assets/(.*)$ app/assets/$1 [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess atualizado"
+
+═══════════════════════════════════════════════════════════════
+
+7️⃣ Testar acesso:
+
+echo "Teste no navegador:"
+echo "  https://betgeniusbr.com/assets/index-R46pBGYW.css"
+echo "  https://betgeniusbr.com/app/assets/index-R46pBGYW.css"
+echo "  https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+

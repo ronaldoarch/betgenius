@@ -1,0 +1,74 @@
+═══════════════════════════════════════════════════════════════
+🔧 CORRIGIR .HTACCESS NA RAIZ E EM PUBLIC/
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA:
+O .htaccess da raiz está interferindo. Precisamos corrigir ambos.
+
+Execute este comando no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html && cp .htaccess .htaccess.backup.$(date +%Y%m%d_%H%M%S) && cp public/.htaccess public/.htaccess.backup.$(date +%Y%m%d_%H%M%S) && cat > .htaccess << 'EOFRAIZ'
+Options +FollowSymLinks +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_URI} ^/api [NC,OR]
+RewriteCond %{REQUEST_URI} ^/admin [NC,OR]
+RewriteCond %{REQUEST_URI} ^/storage [NC]
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+EOFRAIZ
+chmod 644 .htaccess && cat > public/.htaccess << 'EOFPUBLIC'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_URI} ^/admin [NC]
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_URI} ^/storage [NC]
+    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.+)/$
+    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/api
+    RewriteCond %{REQUEST_URI} !^/admin
+    RewriteCond %{REQUEST_URI} !^/storage
+    RewriteRule ^ index.html [L]
+</IfModule>
+DirectoryIndex index.html index.php
+EOFPUBLIC
+chmod 644 public/.htaccess && echo "✅ Ambos .htaccess corrigidos!" && sleep 2 && echo "" && echo "Testando API..." && curl -s https://betgeniusbr.com/api/games | head -c 300
+
+═══════════════════════════════════════════════════════════════
+
+O que foi corrigido:
+- .htaccess na raiz: NÃO redireciona /api, /admin, /storage
+- .htaccess em public/: Processa /api, /admin, /storage PRIMEIRO
+- Tudo mais vai para index.html (React)
+
+Depois de executar:
+1. Limpe o cache do navegador (Ctrl+Shift+R)
+2. Teste: https://betgeniusbr.com/
+3. Os dados devem carregar agora!
+
+═══════════════════════════════════════════════════════════════
+

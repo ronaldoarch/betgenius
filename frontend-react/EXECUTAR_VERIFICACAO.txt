@@ -1,0 +1,12 @@
+═══════════════════════════════════════════════════════════════
+🔍 VERIFICAR E CORRIGIR - COMANDO COMPLETO
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "1️⃣ Corrigindo permissões..." && chmod -R 755 app/assets/ && echo "✅ Permissões corrigidas" && echo "" && echo "2️⃣ Listando arquivos em app/assets/..." && ls -la app/assets/ | head -20 && echo "" && echo "3️⃣ Procurando arquivos CSS/JS..." && ls -la app/assets/*.css app/assets/*.js 2>&1 | head -10 && echo "" && echo "4️⃣ Verificando index.html..." && cat app/index.html | grep -E "assets|\.js|\.css" && echo "" && echo "5️⃣ Verificando build/assets (se existir)..." && ls -la build/assets/*.css build/assets/*.js 2>&1 | head -5
+
+═══════════════════════════════════════════════════════════════
+

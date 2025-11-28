@@ -1,0 +1,50 @@
+═══════════════════════════════════════════════════════════════
+🔍 PROCURAR ARQUIVOS DOS BANNERS
+═══════════════════════════════════════════════════════════════
+
+Execute estes comandos no SSH:
+
+───────────────────────────────────────────────────────────────
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html
+
+# Procurar os arquivos dos banners em todos os lugares possíveis
+echo "=== Procurando arquivos dos banners ==="
+echo ""
+echo "Banner 1: 01KA9S09Z85AV3205AQ8C71B6T.JPG"
+find . -name "01KA9S09Z85AV3205AQ8C71B6T.JPG" 2>/dev/null
+echo ""
+echo "Banner 2: 01KA9SAV9RXY7KM088X3XK3JQZ.JPG"
+find . -name "01KA9SAV9RXY7KM088X3XK3JQZ.JPG" 2>/dev/null
+echo ""
+echo "Banner 3: 01KA9SBKP8VRBPWNYQ7TZFGXQ6.JPG"
+find . -name "01KA9SBKP8VRBPWNYQ7TZFGXQ6.JPG" 2>/dev/null
+echo ""
+
+# Verificar se há um diretório de backup ou antigo
+echo "=== Verificando diretórios possíveis ==="
+ls -la storage/app/public/ 2>/dev/null | head -20
+echo ""
+ls -la public/storage/ 2>/dev/null | head -20
+echo ""
+ls -la public/storage.backup.*/ 2>/dev/null | head -20
+echo ""
+
+# Verificar se há arquivos .JPG em storage/app/public
+echo "=== Procurando todos os .JPG em storage/app/public ==="
+find storage/app/public -name "*.JPG" -o -name "*.jpg" 2>/dev/null | head -10
+echo ""
+
+# Verificar se há arquivos .JPG em public/storage
+echo "=== Procurando todos os .JPG em public/storage ==="
+find public/storage -name "*.JPG" -o -name "*.jpg" 2>/dev/null | head -10
+echo ""
+
+═══════════════════════════════════════════════════════════════
+
+💡 Se os arquivos não forem encontrados:
+   Os banners precisam ser re-uploadados via admin panel em:
+   https://betgeniusbr.com/zirigui/admin/banners
+
+═══════════════════════════════════════════════════════════════
+

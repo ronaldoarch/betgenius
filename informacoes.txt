@@ -1,0 +1,6 @@
+Tutorial Para subir memsa coisa do vídeo do youtube so vai mudar a pasta que é a .env
+
+
+seu site.com/zirigui/login
+
+painel admin: /zirigui/login

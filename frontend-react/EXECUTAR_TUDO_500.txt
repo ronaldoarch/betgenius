@@ -1,0 +1,57 @@
+═══════════════════════════════════════════════════════════════
+🚀 EXECUTAR TUDO - CORRIGIR ERRO 500
+═══════════════════════════════════════════════════════════════
+
+Cole este comando completo no SSH:
+
+═══════════════════════════════════════════════════════════════
+
+cd /home/u127271520/domains/betgeniusbr.com/public_html/public && echo "1️⃣ Verificando arquivos..." && ls -la app/assets/*.css app/assets/*.js 2>&1 && echo "" && echo "2️⃣ Verificando index.html..." && grep -E "assets|\.js|\.css" app/index.html | head -3 && echo "" && echo "3️⃣ Criando .htaccess ROBUSTO..." && cat > .htaccess << 'EOF'
+# NUNCA processar arquivos estáticos como PHP
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|json|xml|txt|html)$">
+  <IfModule mod_php.c>
+    php_flag engine off
+  </IfModule>
+  SetHandler default-handler
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # NUNCA reescrever arquivos que existem fisicamente
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # API Laravel
+  RewriteCond %{REQUEST_URI} ^/api
+  RewriteRule ^ index.php [L]
+
+  # Admin Laravel
+  RewriteCond %{REQUEST_URI} ^/admin
+  RewriteRule ^ index.php [L]
+
+  # Storage Laravel
+  RewriteCond %{REQUEST_URI} ^/storage
+  RewriteRule ^ - [L]
+
+  # React está em /app/ - redirecionar raiz para lá
+  RewriteCond %{REQUEST_URI} ^/$
+  RewriteRule ^ app/ [L]
+
+  # Todas as outras rotas vão para o React em /app/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/app/
+  RewriteRule ^(.*)$ app/$1 [L]
+</IfModule>
+
+DirectoryIndex app/index.html index.php
+EOF
+chmod 644 .htaccess && echo "✅ .htaccess criado" && echo "" && echo "4️⃣ Ajustando permissões..." && chmod 644 app/assets/*.css app/assets/*.js 2>/dev/null && chmod 755 app/assets/ && chmod 644 app/index.html && echo "✅ Permissões OK" && echo "" && echo "✅ PRONTO! Limpe o cache do navegador (Ctrl+Shift+R) e teste: https://betgeniusbr.com/"
+
+═══════════════════════════════════════════════════════════════
+
