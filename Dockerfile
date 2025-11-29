@@ -80,10 +80,20 @@ COPY "frontend-react/" frontend-react/
 WORKDIR /var/www/html/frontend-react
 RUN echo "=== Instalando dependências Node ===" && \
     npm ci --verbose && \
+    echo "=== Removendo temporariamente postcss.config.js do Laravel (se existir) ===" && \
+    if [ -f /var/www/html/postcss.config.js ]; then \
+        mv /var/www/html/postcss.config.js /var/www/html/postcss.config.js.bak; \
+        echo "postcss.config.js do Laravel movido para .bak"; \
+    fi && \
     echo "=== Construindo aplicação React ===" && \
     npm run build && \
     echo "=== Build do React concluído ===" && \
-    ls -la dist/ | head -10
+    ls -la dist/ | head -10 && \
+    echo "=== Restaurando postcss.config.js do Laravel (se existir) ===" && \
+    if [ -f /var/www/html/postcss.config.js.bak ]; then \
+        mv /var/www/html/postcss.config.js.bak /var/www/html/postcss.config.js; \
+        echo "postcss.config.js do Laravel restaurado"; \
+    fi
 
 # Voltar para raiz do Laravel
 WORKDIR /var/www/html
