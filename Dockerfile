@@ -13,7 +13,9 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     openssl \
     ca-certificates \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    libicu-dev \
+    libzip-dev \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     && update-ca-certificates
 
